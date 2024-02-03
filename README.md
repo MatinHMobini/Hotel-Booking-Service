@@ -17,7 +17,7 @@ Visit the live website at ``` [URL] ```.
 1. Clone project and navigate to directory
 ```
 git clone https://github.com/MatinHMobini/CSI_2132_Databases_1.git
-cd CSI_2132_Databases_1
+cd CSI_2132_Databases_1/csi2132_web_app
 ```
 2. Install dependencies (have Node.js installed to run npm)
 ```
