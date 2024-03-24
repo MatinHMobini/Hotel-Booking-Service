@@ -1,0 +1,11 @@
+.navbar {
+  font-family: "Merriweather", serif;
+
+  .logo {
+    width: 60px;
+  }
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+  color: #ff1100;
+}
