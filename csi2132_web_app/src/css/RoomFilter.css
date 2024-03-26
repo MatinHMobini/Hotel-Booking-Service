@@ -1,12 +1,12 @@
 .label-text {
   align-self: center;
   font-weight: bold;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .date-filter-text {
-  width: 120px;
+  width: 110px;
   height: 30px;
   align-self: center;
-  margin-left: 10px;
-  margin-right: 10px;
 }

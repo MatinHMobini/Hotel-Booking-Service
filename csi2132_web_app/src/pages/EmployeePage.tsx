@@ -1,9 +1,13 @@
 import AnimationFadeIn from "../components/AnimationFadeIn";
+import RoomFilter from "../components/RoomFilter";
 
 const EmployeePage = () => {
   return (
     <AnimationFadeIn>
-      <div>Employee View</div>
+      <h1>
+        <b>Available Rooms</b>
+      </h1>
+      <RoomFilter />
     </AnimationFadeIn>
   );
 };
