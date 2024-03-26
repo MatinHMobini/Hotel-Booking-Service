@@ -1,0 +1,17 @@
+.each-slide-effect > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  height: 100vh;
+}
+
+.each-slide-effect span {
+  padding: 20px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.caption {
+  text-align: center;
+}
