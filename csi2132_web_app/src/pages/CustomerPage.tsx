@@ -8,7 +8,7 @@ const CustomerPage = () => {
     <AnimationFadeIn>
       <Slideshow />
       <h1>
-        <b>Available Rooms</b>
+        <b>Available Rooms: [INSERT NUMBER OF ROOMS HERE]</b>
       </h1>
       <RoomFilter />
     </AnimationFadeIn>

@@ -8,8 +8,9 @@
 
 .each-slide-effect span {
   padding: 20px;
-  font-size: 20px;
+  font-size: 200px;
   text-align: center;
+  color: white;
 }
 
 .caption {

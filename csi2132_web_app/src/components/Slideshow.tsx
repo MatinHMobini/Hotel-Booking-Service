@@ -3,11 +3,7 @@ import "react-slideshow-image/dist/styles.css";
 import "../css/Slideshow.css";
 
 const Slideshow = () => {
-  const images = [
-    "toronto.jpg",
-    "https://images.unsplash.com/photo-1506710507565-203b9f24669b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1536&q=80",
-    "https://images.unsplash.com/photo-1536987333706-fc9adfb10d91?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80",
-  ];
+  const images = ["toronto.jpg", "vancouver.jpg", "ottawa.jpg"];
 
   return (
     <Slide
@@ -24,15 +20,15 @@ const Slideshow = () => {
       </div>
       <div className="each-slide-effect">
         <div style={{ backgroundImage: `url(${images[1]})` }}>
-          <span>Slide 2</span>
+          <span>Beautiful Locations</span>
         </div>
-        <p className="caption">City Name</p>
+        <p className="caption">Vancouver</p>
       </div>
       <div className="each-slide-effect">
         <div style={{ backgroundImage: `url(${images[2]})` }}>
-          <span>Slide 3</span>
+          <span>Perfect Vacations</span>
         </div>
-        <p className="caption">City Name</p>
+        <p className="caption">Ottawa</p>
       </div>
     </Slide>
   );
