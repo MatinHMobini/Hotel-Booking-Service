@@ -615,3 +615,26 @@ VALUES
 (300, 200, 530, 'Address40', 40, 'WiFi, TV', 5, 'Sea', TRUE, NULL);
 
 
+-- View 1: number of available rooms per area
+
+create view roomsPerArea as
+SELECT hc.central_address, COUNT(r.room_id) AS num_rooms
+FROM Hotel_Chain hc
+JOIN owns o ON hc.chain_name = o.chain_name AND hc.central_address = o.central_address
+JOIN Hotel h ON o.hotel_id = h.hotel_id AND o.hotel_address = h.address
+JOIN room r ON h.hotel_id = r.hotel_id AND h.address = r.hotel_address
+GROUP BY hc.central_address;
+
+select * from roomsPerArea;
+
+-- View 2: capacity per hotel for all rooms
+CREATE VIEW totalCapacity AS
+SELECT
+    hotel_id,
+    SUM(capacity) AS total_capacity
+FROM
+    room
+GROUP BY
+    hotel_id;
+
+select * from totalCapacity;
