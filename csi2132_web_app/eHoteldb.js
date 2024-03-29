@@ -1,19 +1,19 @@
-import knex from 'knex'
-import creds from './knexfile.cjs'
-import express from 'express'
+import knex from "knex"
+import creds from "./knexfile.cjs";
+import express from "express";
 
 
 const db = knex(creds)
 
-//db("room").select("*").then(console.log)
+db("hotel").select("*").first().then(console.log)
 
 const app = express()
 app.use(express.json())
 
 
-app.get("/Hotel", async (req, res) => {
-    const room = await db("Hotel").select("*")
-    res.json(room)
+app.get("/hotel", async (req, res) => {
+    const hotel = await db("hotel").select("*")
+    res(hotel)
 
 })
 
