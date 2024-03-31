@@ -639,6 +639,23 @@ GROUP BY
 
 select * from totalCapacity;
 
+-- QUERY 1 using aggregation: finding the average price per hotel
+
+Select hotel_id, AVG(price)::numeric(10,2) as average_price
+from room group by hotel_id;
+
+
+-- QUERY 2 being a nested query: finding the total number of booking a customer makes
+
+SELECT C.customer_id, C.customer_name,
+    (
+        SELECT COUNT(*)
+        FROM Bookings B
+        WHERE B.customer_id = C.customer_id
+    ) AS total_bookings
+FROM
+    Customers C;
+    
 -- Query 3: retrieving information for all available rooms
 SELECT room_id as RoomID, room_number as RoomNumber, price, capacity, view_type, amenities, hotel_id, hotel_address
 FROM room
