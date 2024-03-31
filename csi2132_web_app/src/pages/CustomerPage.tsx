@@ -5,18 +5,25 @@ import Slideshow from "../components/Slideshow";
 
 const CustomerPage = () => {
   // Make a GET request to the server to fetch hotel data
-  fetch("/hotel")
-    .then((response) => response.json()) // Parse the JSON response
-    .then((data) => {
-      // Use the fetched data in your UI
-      console.log(data); // For example, log the data to the console
-      // Now you can manipulate the DOM or update your UI using the fetched data
-    })
-    .catch((error) => {
-      // Handle any errors that occur during the fetch
-      console.error("Error fetching hotel data:", error);
-    });
-  return (
+    fetch('http://localhost:3000/hotel')
+        .then(response => {
+            // Check if response is successful
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // Parse JSON data
+            return response.json();
+        })
+        .then(data => {
+            // Handle JSON data received from the server
+            console.log(data); // You can do whatever you want with the data here
+        })
+        .catch(error => {
+            // Handle any errors that occur during the fetch
+            console.error('Fetch error:', error);
+        });
+
+    return (
     <AnimationFadeIn>
       <Slideshow />
       <h1>
