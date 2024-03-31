@@ -31,16 +31,39 @@ const HotelInput = () => {
               required
             />
 
-            <label htmlFor="test3">
+            <label htmlFor="category">
               <b>Category</b>
             </label>
-            <select className="inputBlank" name="cars" id="cars">
+            <select className="inputBlank" name="category">
               <option value="1">{"\u2B50"}</option>
               <option value="2">{"\u2B50 \u2B50"}</option>
               <option value="3">{"\u2B50 \u2B50 \u2B50"}</option>
               <option value="4">{"\u2B50 \u2B50 \u2B50 \u2B50"}</option>
               <option value="5">{"\u2B50 \u2B50 \u2B50 \u2B50 \u2B50"}</option>
             </select>
+
+            <label htmlFor="email">
+              <b>Email Address</b>
+            </label>
+            <input
+              className="inputBlank"
+              type="text"
+              placeholder="Enter Email Address"
+              name="email"
+              required
+            />
+
+            <label htmlFor="phone-number">
+              <b>Phone Number</b>
+            </label>
+            <input
+              className="inputBlank"
+              type="number"
+              placeholder="Enter Phone Number"
+              name="phone-number"
+              min={0}
+              required
+            />
 
             <button type="submit">Insert</button>
             <button type="submit">Delete</button>
