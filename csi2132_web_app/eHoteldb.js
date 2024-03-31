@@ -5,21 +5,19 @@ import express from "express";
 
 const db = knex(creds)
 
-db("hotel").select("*").first().then(console.log)
-
 const app = express()
 app.use(express.json())
 
-
 app.get("/hotel", async (req, res) => {
     const hotel = await db("hotel").select("*")
-    res(hotel)
+    res.json(hotel)
 
 })
 
-app.listen(3000)
+app.listen(5173)
 
 
 
+//db("hotel_chain").select("*").then(console.log)
 
 
