@@ -37,9 +37,36 @@ const Navbar = () => {
               <Link
                 className="nav-link active"
                 aria-current="page"
-                to="/sign-in"
+                to="/customer-input"
               >
-                Sign In
+                Change Customer
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to="/employee-input"
+              >
+                Change Employee
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to="/hotel-input"
+              >
+                Change Hotel
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to="/room-input"
+              >
+                Change Room
               </Link>
             </li>
           </ul>

@@ -3,7 +3,10 @@ import CustomerPage from "./pages/CustomerPage";
 import Layout from "./pages/Layout";
 import EmployeePage from "./pages/EmployeePage";
 import "./App.css";
-import SignInPage from "./pages/SignInPage";
+import RoomInput from "./pages/RoomInput";
+import HotelInput from "./pages/HotelInput";
+import EmployeeInput from "./pages/EmployeeInput";
+import CustomerInput from "./pages/CustomerInput";
 
 function App() {
   return (
@@ -12,7 +15,10 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<CustomerPage />} />
           <Route path="/employee" element={<EmployeePage />} />
-          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/customer-input" element={<CustomerInput />} />
+          <Route path="/employee-input" element={<EmployeeInput />} />
+          <Route path="/hotel-input" element={<HotelInput />} />
+          <Route path="/room-input" element={<RoomInput />} />
         </Route>
       </Routes>
     </HashRouter>

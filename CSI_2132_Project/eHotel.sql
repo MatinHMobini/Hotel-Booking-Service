@@ -62,7 +62,6 @@ create table room (
 	room_number int,
 	room_id int,
 	price int,
-	booking_id int,
 	hotel_address varchar(45),
 	hotel_id int,
 	amenities varchar(45),
@@ -71,8 +70,7 @@ create table room (
 	can_extend boolean,
 	damages varchar(45),
 		primary key(room_id),
-		foreign key(hotel_address, hotel_id) references Hotel(address, hotel_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE
+		foreign key(hotel_address, hotel_id) references Hotel(address, hotel_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 

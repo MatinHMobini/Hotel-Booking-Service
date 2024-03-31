@@ -40,6 +40,7 @@ const RoomFilter = () => {
         type="number"
         style={{ width: 40 }}
         id="room-capacity"
+        min={0}
         value={roomCapacity}
         onChange={(e) => setRoomCapacity(e.target.valueAsNumber)}
       />
@@ -72,6 +73,7 @@ const RoomFilter = () => {
         type="number"
         style={{ width: 50 }}
         id="number-of-rooms"
+        min={0}
         value={numberOfRooms}
         onChange={(e) => setNumberOfRooms(e.target.valueAsNumber)}
       />
@@ -82,6 +84,7 @@ const RoomFilter = () => {
         type="number"
         style={{ width: 60 }}
         id="price"
+        min={0}
         value={price}
         onChange={(e) => setPrice(e.target.valueAsNumber)}
       />
