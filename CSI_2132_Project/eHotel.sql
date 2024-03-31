@@ -638,3 +638,16 @@ GROUP BY
     hotel_id;
 
 select * from totalCapacity;
+
+-- Query 3: retrieving information for all available rooms
+SELECT room_id as RoomID, room_number as RoomNumber, price, capacity, view_type, amenities, hotel_id, hotel_address
+FROM room
+WHERE booking_id IS NULL;
+
+-- Query 4: ordering the hotel chains based on the average ratings of their hotels
+SELECT HC.chain_name, HC.central_address, AVG(H.category)::numeric(10,1) AS total_rating
+FROM Hotel_Chain HC
+JOIN owns O ON HC.chain_name = O.chain_name AND HC.central_address = O.central_address
+JOIN Hotel H ON O.hotel_id = H.hotel_id AND O.hotel_address = H.address
+GROUP BY HC.chain_name, HC.central_address
+ORDER BY total_rating DESC;
