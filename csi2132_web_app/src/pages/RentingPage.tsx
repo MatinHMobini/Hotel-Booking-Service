@@ -52,6 +52,12 @@ const RentingPage = () => {
               required
             />
 
+            <label htmlFor="paid">
+              <b>Has Paid</b>
+            </label>
+            <input className="checkmark" type="checkbox" name="paid" />
+            <br />
+
             <button type="submit">Confirm Rent</button>
           </div>
         </form>

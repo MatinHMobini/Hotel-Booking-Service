@@ -100,10 +100,8 @@ const RoomInput = () => {
             <label htmlFor="extend">
               <b>Can Extend</b>
             </label>
-            <select className="inputBlank" name="extend">
-              <option value="1">Yes</option>
-              <option value="2">No</option>
-            </select>
+            <input className="checkmark" type="checkbox" name="extend" />
+            <br />
 
             <label htmlFor="damages">
               <b>Damages</b>

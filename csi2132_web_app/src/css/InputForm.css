@@ -13,6 +13,13 @@
   box-sizing: border-box;
 }
 
+.checkmark {
+  height: 30px;
+  width: 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 /* Set a style for all buttons */
 button {
   background-color: #04aa6d;
