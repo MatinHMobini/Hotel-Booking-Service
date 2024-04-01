@@ -35,7 +35,7 @@ app.post("/hotel", async (req, res) => {
       filteredRooms = filteredRooms.where("hotel.category", "=", category);
     }
 
-    filteredRooms = filteredRooms
+    filteredRooms = filteredRooms.whereNull("room.booking_id")
         .select(
             "room.room_id",
             "room.capacity",
@@ -114,7 +114,35 @@ app.post("/booking", async (req, res) => {
   }
 });
 
+// Route to handle customer info
+app.get("/customers", async (req, res) => {
+  try {
+    const customers = await db("customer").select("*");
+    res.json(customers);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
+app.post("/insert-customer", async (req, res) => {
+  try {
+    const { id, name, address, date } = req.body;
+
+    // Insert the new customer into the database
+    await db("customer").insert({
+      customer_id: id,
+      customer_name: name,
+      customer_address: address,
+      registration_date: date
+    });
+
+    res.status(201).json({ message: "Customer inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 app.listen(3000, () => {
