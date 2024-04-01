@@ -7,6 +7,8 @@ import RoomInput from "./pages/RoomInput";
 import HotelInput from "./pages/HotelInput";
 import EmployeeInput from "./pages/EmployeeInput";
 import CustomerInput from "./pages/CustomerInput";
+import BookingPage from "./pages/BookingPage";
+import RentingPage from "./pages/RentingPage";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/employee-input" element={<EmployeeInput />} />
           <Route path="/hotel-input" element={<HotelInput />} />
           <Route path="/room-input" element={<RoomInput />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/renting" element={<RentingPage />} />
         </Route>
       </Routes>
     </HashRouter>
