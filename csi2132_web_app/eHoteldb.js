@@ -125,6 +125,27 @@ app.get("/customers", async (req, res) => {
   }
 });
 
+app.put("/update-customer/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, address, date } = req.body;
+
+    // Update the customer information in the database
+    await db("customer")
+        .where("customer_id", "=", id)
+        .update({
+          customer_name: name,
+          customer_address: address,
+          registration_date: date,
+        });
+
+    res.json({ message: "Customer updated successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/insert-customer", async (req, res) => {
   try {
     const { id, name, address, date } = req.body;
@@ -134,10 +155,24 @@ app.post("/insert-customer", async (req, res) => {
       customer_id: id,
       customer_name: name,
       customer_address: address,
-      registration_date: date
+      registration_date: date,
     });
 
     res.status(201).json({ message: "Customer inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.delete("/customers/:customerId", async (req, res) => {
+  try {
+    const customerId = req.params.customerId;
+
+    // Delete the customer from the database
+    await db("customer").where("customer_id", customerId).del();
+
+    res.status(200).json({ message: "Customer deleted successfully" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });

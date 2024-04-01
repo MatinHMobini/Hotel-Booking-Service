@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import AnimationFadeIn from "../components/AnimationFadeIn";
 import "../css/InputForm.css";
 
@@ -34,36 +33,78 @@ const CustomerInput = () => {
         date: e.target.date.value,
       };
 
-      const response = await fetch("http://localhost:3000/insert-customer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const response = await fetch("http://localhost:3000/customers", {
+        method: "GET",
       });
 
       if (response.ok) {
-        console.log("Customer inserted successfully");
-        // Reset form data
-        e.target.reset();
-        // Refresh customer list
-        fetchCustomers();
+        const existingCustomers = await response.json();
+        const existingCustomer = existingCustomers.find(
+            (customer) => customer.customer_id === formData.id
+        );
+
+        if (existingCustomer) {
+          // Customer ID exists, make PUT request to update
+          const updateResponse = await fetch(
+              `http://localhost:3000/update-customer/${formData.id}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+              }
+          );
+
+          if (updateResponse.ok) {
+            console.log("Customer updated successfully");
+            fetchCustomers(); // Refresh customer list
+          } else {
+            console.error("Failed to update customer");
+          }
+        } else {
+          // Customer ID doesn't exist, make POST request to insert
+          const insertResponse = await fetch("http://localhost:3000/insert-customer", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+
+          if (insertResponse.ok) {
+            console.log("Customer inserted successfully");
+            fetchCustomers(); // Refresh customer list
+          } else {
+            console.error("Failed to insert customer");
+          }
+        }
       } else {
-        console.error("Failed to insert customer");
+        console.error("Failed to fetch existing customers");
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const handleDelete = async (customerId) => {
-    // Logic for deleting customer
-    console.log("Delete customer with ID:", customerId);
-  };
 
-  const handleUpdate = async (customerId) => {
-    // Logic for updating customer
-    console.log("Update customer with ID:", customerId);
+
+  const handleDelete = async (customerId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/customers/${customerId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Customer deleted successfully");
+        // Refresh customer list
+        fetchCustomers();
+      } else {
+        console.error("Failed to delete customer");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -147,13 +188,6 @@ const CustomerInput = () => {
                       >
                         DELETE
                       </button>
-                      <button
-                          className="updateButton"
-                          style={{ width: "100px", fontSize: "16px" }}
-                          onClick={() => handleUpdate(customer.customer_id)}
-                      >
-                        UPDATE
-                      </button>
                     </td>
                   </tr>
               ))}
@@ -166,6 +200,7 @@ const CustomerInput = () => {
 };
 
 export default CustomerInput;
+
 
 
 
