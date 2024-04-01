@@ -666,3 +666,60 @@ JOIN owns O ON HC.chain_name = O.chain_name AND HC.central_address = O.central_a
 JOIN Hotel H ON O.hotel_id = H.hotel_id AND O.hotel_address = H.address
 GROUP BY HC.chain_name, HC.central_address
 ORDER BY total_rating DESC;
+
+
+
+
+--INDEX 1: frequently query rooms based on the hotel they belong to, the database can quickly locate rooms associated with a specific hotel, improving query performance.
+--Create index on hotel_id in the room table
+CREATE INDEX idx_room_hotel_id ON room (hotel_id);
+
+--INDEX 2: We have to check a booking ID is null to see whether it is available for other customers, so this can be sped up using an index.
+CREATE INDEX idx_room_booking_id ON room(booking_id);
+
+--INDEX 3: This index is useful for queries that involve filtering or sorting rooms based on their capacity.
+-- Create index on capacity in the room table
+CREATE INDEX idx_room_capacity ON room (capacity);
+
+--FOR updating booking_ID in room whenever a booking is made
+CREATE OR REPLACE FUNCTION update_room_booking_id()
+    RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE room
+    SET booking_id = NEW.booking_id
+    WHERE room_id = NEW.room_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_room_booking_id_trigger
+    AFTER INSERT ON booking
+    FOR EACH ROW EXECUTE FUNCTION update_room_booking_id();
+
+
+
+
+--NEWLY ADDED
+-- Insert data into customer table
+INSERT INTO customer (customer_id, customer_name, customer_address, registration_date)
+VALUES
+    (1, 'John Doe', '123 Main St, Cityville', '2023-01-15'),
+    (2, 'Jane Smith', '456 Elm St, Townsville', '2023-02-20'),
+    (3, 'Alice Johnson', '789 Oak St, Villagetown', '2023-03-25'),
+    (4, 'Bob Brown', '101 Pine St, Hamletville', '2023-04-30'),
+    (5, 'Emily Davis', '202 Maple St, Countryside', '2023-05-05');
+
+
+
+-- Insert data into booking table
+INSERT INTO booking (booking_id, room_id, booking_date, customer_id)
+VALUES
+    (1, 1, '2024-03-16', 1),
+    (2, 2, '2024-03-16', 2),
+    (3, 3, '2024-03-16', 3),
+    (4, 4, '2024-03-16', 4),
+    (5, 5, '2024-03-16', 5);
+
+
+select * from room
