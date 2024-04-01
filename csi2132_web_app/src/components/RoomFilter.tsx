@@ -2,16 +2,19 @@ import { useState, useEffect } from "react";
 import "../css/RoomFilter.css";
 
 const RoomFilter = ({ updateRooms }) => {
+    // State to hold filter values
     const [roomCapacity, setRoomCapacity] = useState(0);
     const [price, setPrice] = useState(0);
     const [area, setArea] = useState("");
     const [hotelChain, setHotelChain] = useState("");
     const [category, setCategory] = useState(0);
 
+    // Effect to update rooms when filters change
     useEffect(() => {
         updateRooms({ roomCapacity, price, area, hotelChain, category });
     }, [roomCapacity, price, area, hotelChain, category]);
 
+    // JSX for the filter inputs
     return (
         <div>
             <label htmlFor="room-capacity" className="label-text">
@@ -71,4 +74,5 @@ const RoomFilter = ({ updateRooms }) => {
 };
 
 export default RoomFilter;
+
 

@@ -5,8 +5,10 @@ import RoomFilter from "../components/RoomFilter";
 import Slideshow from "../components/Slideshow";
 
 const CustomerPage = () => {
+    // State to hold the list of rooms
     const [rooms, setRooms] = useState([]);
 
+    // Function to update the list of rooms based on filters
     const updateRooms = (filters) => {
         // Check if all search criteria are empty
         const allEmpty = Object.values(filters).every(value => value === "" || value === 0);
@@ -17,6 +19,7 @@ const CustomerPage = () => {
             return;
         }
 
+        // Fetch filtered rooms from the server
         fetch("http://localhost:3000/hotel", {
             method: "POST",
             headers: {
@@ -53,6 +56,7 @@ const CustomerPage = () => {
                 ) : (
                     <div>
                         {rooms.map((room) => (
+                            // Display room details for each matching room
                             <p key={room.room_id}>
                                 Room ID: {room.room_id}, Capacity: {room.capacity},
                                 Room Number: {room.room_number}, Hotel Address: {room.hotel_address},
