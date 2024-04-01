@@ -1,37 +1,73 @@
+import { useState } from "react";
 import AnimationFadeIn from "../components/AnimationFadeIn";
 import "../css/CustomerPage.css";
 import RoomFilter from "../components/RoomFilter";
 import Slideshow from "../components/Slideshow";
 
 const CustomerPage = () => {
-  // Make a GET request to the server to fetch hotel data
-  fetch("http://localhost:3000/hotel")
-    .then((response) => {
-      // Check if response is successful
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      // Parse JSON data
-      return response.json();
-    })
-    .then((data) => {
-      // Handle JSON data received from the server
-      console.log(data); // You can do whatever you want with the data here
-    })
-    .catch((error) => {
-      // Handle any errors that occur during the fetch
-      console.error("Fetch error:", error);
-    });
+    const [rooms, setRooms] = useState([]);
 
-  return (
-    <AnimationFadeIn>
-      <Slideshow />
-      <h1>
-        <b>Available Rooms: [INSERT NUMBER OF ROOMS HERE]</b>
-      </h1>
-      <RoomFilter />
-    </AnimationFadeIn>
-  );
+    const updateRooms = (filters) => {
+        // Check if all search criteria are empty
+        const allEmpty = Object.values(filters).every(value => value === "" || value === 0);
+
+        // If all criteria are empty, set rooms to an empty array and return
+        if (allEmpty) {
+            setRooms([]);
+            return;
+        }
+
+        fetch("http://localhost:3000/hotel", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(filters),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Check if data is an array
+                if (Array.isArray(data)) {
+                    setRooms(data);
+                } else {
+                    setRooms([]);
+                }
+            })
+            .catch((error) => {
+                console.error("Fetch error:", error);
+            });
+    };
+
+
+    return (
+        <AnimationFadeIn>
+            <Slideshow />
+            <h1>
+                <b>Available Rooms: {rooms.length}</b>
+            </h1>
+            <RoomFilter updateRooms={updateRooms} />
+            <div>
+                <h3>Matching Room IDs:</h3>
+                {rooms.length === 0 ? (
+                    <p key="no-match">No Matching Room IDs</p>
+                ) : (
+                    <div>
+                        {rooms.map((room) => (
+                            <p key={room.room_id}>
+                                Room ID: {room.room_id}, Capacity: {room.capacity},
+                                Room Number: {room.room_number}, Hotel Address: {room.hotel_address},
+                                Price: {room.price}, Amenities: {room.amenities},
+                                View Type: {room.view_type}, Can Extend: {room.can_extend ? "Yes" : "No"}
+                            </p>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </AnimationFadeIn>
+    );
 };
 
 export default CustomerPage;
+
+
+
