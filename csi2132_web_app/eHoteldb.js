@@ -384,6 +384,17 @@ app.delete("/rooms/:roomId", async (req, res) => {
   }
 });
 
+app.get("/totalcapacity", async (req, res) => {
+  try {// Order by hotel_id in ascending order
+    const totalCapacityPerHotel = await db("totalcapacity").orderBy("hotel_id", "asc").select("*");
+    res.json(totalCapacityPerHotel);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");

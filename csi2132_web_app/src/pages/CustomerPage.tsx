@@ -7,15 +7,13 @@ import Button from "../components/Button";
 import { Link } from "react-router-dom";
 
 const CustomerPage = () => {
-    // State to hold the list of rooms
     const [rooms, setRooms] = useState([]);
-    // State to hold the list of rooms per area
     const [roomsPerArea, setRoomsPerArea] = useState([]);
-    // State to hold the number of rooms in hotel input value
-    //const [numberOfRoomsInHotel, setNumberOfRoomsInHotel] = useState("");
+    const [totalCapacityPerHotel, setTotalCapacityPerHotel] = useState([]);
 
     useEffect(() => {
         fetchRoomsPerArea();
+        fetchTotalCapacityPerHotel();
     }, []);
 
     const fetchRoomsPerArea = async () => {
@@ -32,20 +30,30 @@ const CustomerPage = () => {
         }
     };
 
-    // Function to update the list of rooms based on filters
+    const fetchTotalCapacityPerHotel = async () => {
+        try {
+            const response = await fetch("http://localhost:3000/totalcapacity");
+            if (response.ok) {
+                const data = await response.json();
+                setTotalCapacityPerHotel(data);
+            } else {
+                console.error("Failed to fetch total capacity per hotel");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
     const updateRooms = (filters) => {
-        // Check if all search criteria are empty
         const allEmpty = Object.values(filters).every(
             (value) => value === "" || value === 0
         );
 
-        // If all criteria are empty, set rooms to an empty array and return
         if (allEmpty) {
             setRooms([]);
             return;
         }
 
-        // Fetch filtered rooms from the server
         fetch("http://localhost:3000/hotel", {
             method: "POST",
             headers: {
@@ -55,7 +63,6 @@ const CustomerPage = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                // Check if data is an array
                 if (Array.isArray(data)) {
                     setRooms(data);
                 } else {
@@ -66,7 +73,6 @@ const CustomerPage = () => {
                 console.error("Fetch error:", error);
             });
     };
-
 
     return (
         <AnimationFadeIn>
@@ -81,6 +87,19 @@ const CustomerPage = () => {
                     </p>
                 ))}
             </div>
+
+            {/* New addition: Total capacity per hotel */}
+            <h1>
+                <b>Total Capacity Per Hotel:</b>
+            </h1>
+            <div>
+                {totalCapacityPerHotel.map((hotel) => (
+                    <p key={hotel.hotel_id}>
+                        Hotel ID: {hotel.hotel_id}, Total Capacity: {hotel.total_capacity}
+                    </p>
+                ))}
+            </div>
+
             <h1>
                 <b>Available Rooms: {rooms.length}</b>
             </h1>
@@ -112,4 +131,3 @@ const CustomerPage = () => {
 };
 
 export default CustomerPage;
-
