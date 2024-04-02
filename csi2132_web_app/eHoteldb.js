@@ -179,16 +179,6 @@ app.delete("/customers/:customerId", async (req, res) => {
   }
 });
 
-app.get("/roomsperarea", async (req, res) => {
-  try {
-    const roomsPerArea = await db("roomsperareafixed").select("*");
-    res.json(roomsPerArea);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 // Route to insert a new employee
 app.post("/insert-employee", async (req, res) => {
   try {
@@ -220,6 +210,76 @@ app.delete("/employees/:employeeId", async (req, res) => {
     await db("employee").where("employee_sin", employeeSin).del();
 
     res.status(200).json({ message: "Employee deleted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Route to fetch all hotels
+app.get("/hotels", async (req, res) => {
+  try {
+    const hotels = await db("hotel").select("*");
+    res.json(hotels);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to update a hotel
+app.put("/hotels/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { address, category, numberOfRooms, emailAddress, phoneNumber } = req.body;
+
+    await db("hotel")
+      .where("hotel_id", "=", id)
+      .update({
+        address,
+        category,
+        number_of_rooms: numberOfRooms,
+        email_address: emailAddress,
+        phone_number: phoneNumber
+      });
+
+    res.json({ message: "Hotel updated successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to insert a new hotel
+app.post("/hotels", async (req, res) => {
+  try {
+    const { id, address, category, numberOfRooms, emailAddress, phoneNumber } = req.body;
+
+    await db("hotel").insert({
+      hotel_id: id,
+      address,
+      category,
+      number_of_rooms: numberOfRooms,
+      email_address: emailAddress,
+      phone_number: phoneNumber
+    });
+
+    res.status(201).json({ message: "Hotel inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to delete a hotel
+app.delete("/hotels/:hotelId", async (req, res) => {
+  try {
+    const hotelId = req.params.hotelId;
+
+    await db("hotel").where("hotel_id", hotelId).del();
+
+    res.status(200).json({ message: "Hotel deleted successfully" });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });
