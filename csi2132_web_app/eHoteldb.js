@@ -189,6 +189,42 @@ app.get("/roomsperarea", async (req, res) => {
   }
 });
 
+// Route to insert a new employee
+app.post("/insert-employee", async (req, res) => {
+  try {
+    const { sin, name, address, role, hotelid, hoteladdress } = req.body;
+
+    // Insert the new employee into the database
+    await db("employee").insert({
+      employee_sin: sin,
+      employee_name: name,
+      employee_address: address,
+      e_role: role,
+      hotel_id: hotelid,
+      hotel_address: hoteladdress
+    });
+
+    res.status(201).json({ message: "Employee inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to delete an employee
+app.delete("/employees/:employeeId", async (req, res) => {
+  try {
+    const employeeSin = req.params.employeeSin;
+
+    // Delete the employee from the database
+    await db("employee").where("employee_sin", employeeSin).del();
+
+    res.status(200).json({ message: "Employee deleted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
