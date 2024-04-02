@@ -349,9 +349,15 @@ app.get("/rooms", async (req, res) => {
   }
 });
 
+// Route to insert a new room
 app.post("/rooms", async (req, res) => {
   try {
-    const { id, capacity, price, amenities, viewType, canExtend } = req.body;
+    const { id, capacity, price, amenities, viewType, canExtend, hotelId } = req.body;
+
+    // Check if hotelId is provided
+    if (!hotelId) {
+      return res.status(400).json({ error: "Hotel ID is required" });
+    }
 
     // Insert the new room into the database
     await db("room").insert({
@@ -361,6 +367,7 @@ app.post("/rooms", async (req, res) => {
       amenities,
       view_type: viewType,
       can_extend: canExtend,
+      hotel_id: hotelId // Include hotel_id in the insert operation
     });
 
     res.status(201).json({ message: "Room inserted successfully" });
@@ -370,6 +377,7 @@ app.post("/rooms", async (req, res) => {
   }
 });
 
+// Route to delete a room
 app.delete("/rooms/:roomId", async (req, res) => {
   try {
     const roomId = req.params.roomId;
@@ -393,7 +401,6 @@ app.get("/totalcapacity", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 
 app.listen(3000, () => {

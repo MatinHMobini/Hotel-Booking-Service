@@ -917,4 +917,4 @@ VALUES
     (5, 5, '2024-03-16', 5);
 
 
-select * from hotel 
+select * from hotel
