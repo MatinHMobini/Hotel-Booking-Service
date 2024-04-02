@@ -286,6 +286,53 @@ app.delete("/hotels/:hotelId", async (req, res) => {
   }
 });
 
+// Route to handle room information
+app.get("/rooms", async (req, res) => {
+  try {
+    const rooms = await db("room").select("*");
+    res.json(rooms);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/rooms", async (req, res) => {
+  try {
+    const { id, capacity, price, amenities, viewType, canExtend } = req.body;
+
+    // Insert the new room into the database
+    await db("room").insert({
+      room_id: id,
+      capacity,
+      price,
+      amenities,
+      view_type: viewType,
+      can_extend: canExtend,
+    });
+
+    res.status(201).json({ message: "Room inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.delete("/rooms/:roomId", async (req, res) => {
+  try {
+    const roomId = req.params.roomId;
+
+    // Delete the room from the database
+    await db("room").where("room_id", roomId).del();
+
+    res.status(200).json({ message: "Room deleted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
