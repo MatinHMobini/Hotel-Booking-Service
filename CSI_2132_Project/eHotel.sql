@@ -612,18 +612,215 @@ VALUES
 (299, 199, 520, 'Address40', 40, 'WiFi, TV', 4, 'Mountain', TRUE, NULL),
 (300, 200, 530, 'Address40', 40, 'WiFi, TV', 5, 'Sea', TRUE, NULL);
 
+-- Insert managers for each hotel in each hotel chain
+INSERT INTO employee (employee_sin, employee_name, employee_address, e_role, hotel_id, hotel_address)
+VALUES
+-- Managers for Chain1 hotels
+(1, 'Manager1 Chain1 Hotel1', 'Address1', 'Manager', 1, 'Address1'),
+(2, 'Manager1 Chain1 Hotel2', 'Address2', 'Manager', 2, 'Address2'),
+(3, 'Manager1 Chain1 Hotel3', 'Address3', 'Manager', 3, 'Address3'),
+(4, 'Manager1 Chain1 Hotel4', 'Address4', 'Manager', 4, 'Address4'),
+(5, 'Manager1 Chain1 Hotel5', 'Address5', 'Manager', 5, 'Address5'),
+(6, 'Manager1 Chain1 Hotel6', 'Address6', 'Manager', 6, 'Address6'),
+(7, 'Manager1 Chain1 Hotel7', 'Address7', 'Manager', 7, 'Address7'),
+(8, 'Manager1 Chain1 Hotel8', 'Address8', 'Manager', 8, 'Address8'),
+
+-- Managers for Chain2 hotels
+(9, 'Manager1 Chain2 Hotel9', 'Address9', 'Manager', 9, 'Address9'),
+(10, 'Manager1 Chain2 Hotel10', 'Address10', 'Manager', 10, 'Address10'),
+(11, 'Manager1 Chain2 Hotel11', 'Address11', 'Manager', 11, 'Address11'),
+(12, 'Manager1 Chain2 Hotel12', 'Address12', 'Manager', 12, 'Address12'),
+(13, 'Manager1 Chain2 Hotel13', 'Address13', 'Manager', 13, 'Address13'),
+(14, 'Manager1 Chain2 Hotel14', 'Address14', 'Manager', 14, 'Address14'),
+(15, 'Manager1 Chain2 Hotel15', 'Address15', 'Manager', 15, 'Address15'),
+(16, 'Manager1 Chain2 Hotel16', 'Address16', 'Manager', 16, 'Address16'),
+
+-- Managers for Chain3 hotels
+(17, 'Manager1 Chain3 Hotel17', 'Address17', 'Manager', 17, 'Address17'),
+(18, 'Manager1 Chain3 Hotel18', 'Address18', 'Manager', 18, 'Address18'),
+(19, 'Manager1 Chain3 Hotel19', 'Address19', 'Manager', 19, 'Address19'),
+(20, 'Manager1 Chain3 Hotel20', 'Address20', 'Manager', 20, 'Address20'),
+(21, 'Manager1 Chain3 Hotel21', 'Address21', 'Manager', 21, 'Address21'),
+(22, 'Manager1 Chain3 Hotel22', 'Address22', 'Manager', 22, 'Address22'),
+(23, 'Manager1 Chain3 Hotel23', 'Address23', 'Manager', 23, 'Address23'),
+(24, 'Manager1 Chain3 Hotel24', 'Address24', 'Manager', 24, 'Address24'),
+
+-- Managers for Chain4 hotels
+(25, 'Manager1 Chain4 Hotel25', 'Address25', 'Manager', 25, 'Address25'),
+(26, 'Manager1 Chain4 Hotel26', 'Address26', 'Manager', 26, 'Address26'),
+(27, 'Manager1 Chain4 Hotel27', 'Address27', 'Manager', 27, 'Address27'),
+(28, 'Manager1 Chain4 Hotel28', 'Address28', 'Manager', 28, 'Address28'),
+(29, 'Manager1 Chain4 Hotel29', 'Address29', 'Manager', 29, 'Address29'),
+(30, 'Manager1 Chain4 Hotel30', 'Address30', 'Manager', 30, 'Address30'),
+(31, 'Manager1 Chain4 Hotel31', 'Address31', 'Manager', 31, 'Address31'),
+(32, 'Manager1 Chain4 Hotel32', 'Address32', 'Manager', 32, 'Address32'),
+
+-- Managers for Chain5 hotels
+(33, 'Manager1 Chain5 Hotel33', 'Address33', 'Manager', 33, 'Address33'),
+(34, 'Manager1 Chain5 Hotel34', 'Address34', 'Manager', 34, 'Address34'),
+(35, 'Manager1 Chain5 Hotel35', 'Address35', 'Manager', 35, 'Address35'),
+(36, 'Manager1 Chain5 Hotel36', 'Address36', 'Manager', 36, 'Address36'),
+(37, 'Manager1 Chain5 Hotel37', 'Address37', 'Manager', 37, 'Address37'),
+(38, 'Manager1 Chain5 Hotel38', 'Address38', 'Manager', 38, 'Address38'),
+(39, 'Manager1 Chain5 Hotel39', 'Address39', 'Manager', 39, 'Address39'),
+(40, 'Manager1 Chain5 Hotel40', 'Address40', 'Manager', 40, 'Address40');
+
+
+CREATE OR REPLACE FUNCTION insert_into_composed_of()
+    RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO composed_of (room_id, hotel_id, address)
+    VALUES (NEW.room_id, NEW.hotel_id, NEW.hotel_address);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insert_into_composed_of_trigger
+    AFTER INSERT ON room
+    FOR EACH ROW EXECUTE FUNCTION insert_into_composed_of();
+
+
+CREATE OR REPLACE FUNCTION update_reserves()
+    RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO reserves (booking_id, room_id)
+    VALUES (NEW.booking_id, NEW.room_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_reserves_trigger
+    AFTER INSERT ON booking
+    FOR EACH ROW EXECUTE FUNCTION update_reserves();
+
+
+
+CREATE OR REPLACE FUNCTION insert_has_a()
+    RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO has_a (customer_id, renting_id)
+    VALUES (NEW.customer_id, NEW.renting_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insert_has_a_trigger
+    AFTER INSERT ON renting
+    FOR EACH ROW EXECUTE FUNCTION insert_has_a();
+
+
+
+CREATE OR REPLACE FUNCTION insert_occupies()
+    RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO occupies (room_id, renting_id)
+    VALUES (NEW.room_id, NEW.renting_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insert_occupies_trigger
+    AFTER INSERT ON renting
+    FOR EACH ROW EXECUTE FUNCTION insert_occupies();
+
+
+CREATE OR REPLACE FUNCTION insert_creates()
+    RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO creates (booking_id, customer_id)
+    VALUES (NEW.booking_id, NEW.customer_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insert_creates_trigger
+    AFTER INSERT ON booking
+    FOR EACH ROW EXECUTE FUNCTION insert_creates();
+
+
+
+-- Trigger for INSERT operation on room
+CREATE OR REPLACE FUNCTION increment_room_count()
+    RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Hotel
+    SET number_of_rooms = number_of_rooms + 1
+    WHERE hotel_id = NEW.hotel_id AND address = NEW.hotel_address;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER increment_room_count_trigger
+    AFTER INSERT ON room
+    FOR EACH ROW EXECUTE FUNCTION increment_room_count();
+
+-- Trigger for DELETE operation on room
+CREATE OR REPLACE FUNCTION decrement_room_count()
+    RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Hotel
+    SET number_of_rooms = number_of_rooms - 1
+    WHERE hotel_id = OLD.hotel_id AND address = OLD.hotel_address;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER decrement_room_count_trigger
+    AFTER DELETE ON room
+    FOR EACH ROW EXECUTE FUNCTION decrement_room_count();
+
+
+-- Trigger for INSERT operation on Hotel
+CREATE OR REPLACE FUNCTION increment_hotel_count()
+    RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Hotel_Chain
+    SET number_of_hotels = number_of_hotels + 1
+    WHERE chain_name = (SELECT chain_name FROM owns WHERE hotel_id = NEW.hotel_id AND hotel_address = NEW.address);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER increment_hotel_count_trigger
+    AFTER INSERT ON Hotel
+    FOR EACH ROW EXECUTE FUNCTION increment_hotel_count();
+
+-- Trigger for DELETE operation on room
+CREATE OR REPLACE FUNCTION decrement_hotel_count()
+    RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Hotel_Chain
+    SET number_of_hotels = number_of_hotels - 1
+    WHERE chain_name = (SELECT chain_name FROM owns WHERE hotel_id = OLD.hotel_id AND hotel_address = OLD.address);
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER decrement_hotel_count_trigger
+    AFTER DELETE ON Hotel
+    FOR EACH ROW EXECUTE FUNCTION decrement_hotel_count();
+
+
+
+
+
 
 -- View 1: number of available rooms per area
-
-create view roomsPerArea as
+CREATE VIEW roomsPerAreafixed AS
 SELECT hc.central_address, COUNT(r.room_id) AS num_rooms
 FROM Hotel_Chain hc
-JOIN owns o ON hc.chain_name = o.chain_name AND hc.central_address = o.central_address
-JOIN Hotel h ON o.hotel_id = h.hotel_id AND o.hotel_address = h.address
-JOIN room r ON h.hotel_id = r.hotel_id AND h.address = r.hotel_address
+         JOIN owns o ON hc.chain_name = o.chain_name AND hc.central_address = o.central_address
+         JOIN Hotel h ON o.hotel_id = h.hotel_id AND o.hotel_address = h.address
+         JOIN room r ON h.hotel_id = r.hotel_id AND h.address = r.hotel_address
+WHERE r.booking_id IS NULL -- Added WHERE clause to filter rooms where booking_id is NULL
 GROUP BY hc.central_address;
 
-select * from roomsPerArea;
+
+select * from roomsPerAreafixed;
 
 -- View 2: capacity per hotel for all rooms
 CREATE VIEW totalCapacity AS
@@ -646,14 +843,14 @@ from room group by hotel_id;
 -- QUERY 2 being a nested query: finding the total number of booking a customer makes
 
 SELECT C.customer_id, C.customer_name,
-    (
-        SELECT COUNT(*)
-        FROM Bookings B
-        WHERE B.customer_id = C.customer_id
-    ) AS total_bookings
+       (
+           SELECT COUNT(*)
+           FROM Bookings B
+           WHERE B.customer_id = C.customer_id
+       ) AS total_bookings
 FROM
     Customers C;
-    
+
 -- Query 3: retrieving information for all available rooms
 SELECT room_id as RoomID, room_number as RoomNumber, price, capacity, view_type, amenities, hotel_id, hotel_address
 FROM room
@@ -662,11 +859,10 @@ WHERE booking_id IS NULL;
 -- Query 4: ordering the hotel chains based on the average ratings of their hotels
 SELECT HC.chain_name, HC.central_address, AVG(H.category)::numeric(10,1) AS total_rating
 FROM Hotel_Chain HC
-JOIN owns O ON HC.chain_name = O.chain_name AND HC.central_address = O.central_address
-JOIN Hotel H ON O.hotel_id = H.hotel_id AND O.hotel_address = H.address
+         JOIN owns O ON HC.chain_name = O.chain_name AND HC.central_address = O.central_address
+         JOIN Hotel H ON O.hotel_id = H.hotel_id AND O.hotel_address = H.address
 GROUP BY HC.chain_name, HC.central_address
 ORDER BY total_rating DESC;
-
 
 
 
@@ -700,7 +896,6 @@ CREATE TRIGGER update_room_booking_id_trigger
 
 
 
---NEWLY ADDED
 -- Insert data into customer table
 INSERT INTO customer (customer_id, customer_name, customer_address, registration_date)
 VALUES
@@ -722,4 +917,4 @@ VALUES
     (5, 5, '2024-03-16', 5);
 
 
-select * from room
+select * from hotel 
