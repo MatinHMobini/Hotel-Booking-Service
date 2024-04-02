@@ -179,6 +179,16 @@ app.delete("/customers/:customerId", async (req, res) => {
   }
 });
 
+app.get("/roomsperarea", async (req, res) => {
+  try {
+    const roomsPerArea = await db("roomsperareafixed").select("*");
+    res.json(roomsPerArea);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
