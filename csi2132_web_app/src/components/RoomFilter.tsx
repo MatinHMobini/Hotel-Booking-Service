@@ -8,11 +8,12 @@ const RoomFilter = ({ updateRooms }) => {
     const [area, setArea] = useState("");
     const [hotelChain, setHotelChain] = useState("");
     const [category, setCategory] = useState(0);
+    const [numberOfRoomsInHotel, setNumberOfRoomsInHotel] = useState(0);
 
     // Effect to update rooms when filters change
     useEffect(() => {
-        updateRooms({ roomCapacity, price, area, hotelChain, category });
-    }, [roomCapacity, price, area, hotelChain, category]);
+        updateRooms({ roomCapacity, price, area, hotelChain, category, numberOfRoomsInHotel });
+    }, [roomCapacity, price, area, hotelChain, category, numberOfRoomsInHotel]);
 
     // JSX for the filter inputs
     return (
@@ -68,6 +69,17 @@ const RoomFilter = ({ updateRooms }) => {
                 max={5}
                 value={category}
                 onChange={(e) => setCategory(e.target.valueAsNumber)}
+            />
+            <label htmlFor="number-of-rooms" className="label-text">
+                Number of Rooms in Hotel:
+            </label>
+            <input
+                type="number"
+                style={{ width: 40 }} // Adjusted width to accommodate the label
+                id="number-of-rooms"
+                min={0}
+                value={numberOfRoomsInHotel}
+                onChange={(e) => setNumberOfRoomsInHotel(e.target.valueAsNumber)}
             />
         </div>
     );

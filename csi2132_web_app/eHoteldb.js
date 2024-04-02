@@ -9,12 +9,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Import required modules and setup the server
 app.post("/hotel", async (req, res) => {
   try {
-    const { roomCapacity, price, area, hotelChain, category } = req.body;
+    const { roomCapacity, price, area, hotelChain, category, numberOfRoomsInHotel } = req.body;
 
     let filteredRooms = db("room")
-        .join("hotel", "room.hotel_id", "hotel.hotel_id");
+        .join("hotel as h1", "room.hotel_id", "h1.hotel_id"); // Alias the first hotel table as h1
 
     if (roomCapacity) {
       filteredRooms = filteredRooms.where("room.capacity", "=", roomCapacity);
@@ -23,7 +24,7 @@ app.post("/hotel", async (req, res) => {
       filteredRooms = filteredRooms.where("room.price", "<=", price);
     }
     if (area) {
-      filteredRooms = filteredRooms.where("hotel.address", "=", area);
+      filteredRooms = filteredRooms.where("h1.address", "=", area); // Use the alias h1 for the first hotel table
     }
     if (hotelChain) {
       filteredRooms = filteredRooms
@@ -32,8 +33,15 @@ app.post("/hotel", async (req, res) => {
           .where("hotel_chain.chain_name", "=", hotelChain);
     }
     if (category) {
-      filteredRooms = filteredRooms.where("hotel.category", "=", category);
+      filteredRooms = filteredRooms.where("h1.category", "=", category); // Use the alias h1 for the first hotel table
     }
+    if (numberOfRoomsInHotel) {
+      // Filter rooms based on the number of rooms in the hotel
+      filteredRooms = filteredRooms
+          .join("hotel as h2", "room.hotel_id", "h2.hotel_id")
+          .where("h2.number_of_rooms", "=", numberOfRoomsInHotel);
+    }
+
 
     filteredRooms = filteredRooms.whereNull("room.booking_id")
         .select(
@@ -44,7 +52,7 @@ app.post("/hotel", async (req, res) => {
             "room.amenities",
             "room.view_type",
             "room.can_extend",
-            "hotel.address as hotel_address"
+            "h1.address as hotel_address" // Use the alias h1 for the first hotel table
         );
 
     const result = await filteredRooms;

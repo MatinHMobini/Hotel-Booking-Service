@@ -11,6 +11,8 @@ const CustomerPage = () => {
     const [rooms, setRooms] = useState([]);
     // State to hold the list of rooms per area
     const [roomsPerArea, setRoomsPerArea] = useState([]);
+    // State to hold the number of rooms in hotel input value
+    //const [numberOfRoomsInHotel, setNumberOfRoomsInHotel] = useState("");
 
     useEffect(() => {
         fetchRoomsPerArea();
@@ -65,6 +67,7 @@ const CustomerPage = () => {
             });
     };
 
+
     return (
         <AnimationFadeIn>
             <Slideshow />
@@ -81,7 +84,9 @@ const CustomerPage = () => {
             <h1>
                 <b>Available Rooms: {rooms.length}</b>
             </h1>
-            <RoomFilter updateRooms={updateRooms} />
+            <div className="filter-container">
+                <RoomFilter updateRooms={updateRooms} />
+            </div>
             <div>
                 <h3>Matching Room IDs:</h3>
                 {rooms.length === 0 ? (
@@ -107,3 +112,4 @@ const CustomerPage = () => {
 };
 
 export default CustomerPage;
+
