@@ -179,6 +179,16 @@ app.delete("/customers/:customerId", async (req, res) => {
   }
 });
 
+app.get("/roomsperarea", async (req, res) => {
+  try {
+    const roomsPerArea = await db("roomsperareafixed").select("*");
+    res.json(roomsPerArea);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // Route to insert a new employee
 app.post("/insert-employee", async (req, res) => {
   try {
@@ -201,13 +211,37 @@ app.post("/insert-employee", async (req, res) => {
   }
 });
 
-// Route to delete an employee
-app.delete("/employees/:employeeId", async (req, res) => {
+// Route to update an existing employee
+app.put("/update-employee/:sin", async (req, res) => {
   try {
-    const employeeSin = req.params.employeeSin;
+    const { sin } = req.params;
+    const { name, address, role, hotelid, hoteladdress } = req.body;
+
+    // Update the employee information in the database
+    await db("employee")
+        .where("employee_sin", "=", sin)
+        .update({
+          employee_name: name,
+          employee_address: address,
+          e_role: role,
+          hotel_id: hotelid,
+          hotel_address: hoteladdress
+        });
+
+    res.json({ message: "Employee updated successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to delete an employee
+app.delete("/employees/:sin", async (req, res) => {
+  try {
+    const sin = req.params.sin;
 
     // Delete the employee from the database
-    await db("employee").where("employee_sin", employeeSin).del();
+    await db("employee").where("employee_sin", sin).del();
 
     res.status(200).json({ message: "Employee deleted successfully" });
   } catch (error) {
@@ -216,6 +250,16 @@ app.delete("/employees/:employeeId", async (req, res) => {
   }
 });
 
+// Route to fetch all employees
+app.get("/employees", async (req, res) => {
+  try {
+    const employees = await db("employee").select("*");
+    res.json(employees);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Route to fetch all hotels
 app.get("/hotels", async (req, res) => {

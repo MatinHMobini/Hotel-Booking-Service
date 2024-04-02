@@ -40,3 +40,34 @@ button:hover {
 .container {
   padding: 16px;
 }
+
+/* InputForm.css */
+
+/* Add padding to table cells */
+td {
+  padding: 10px; /* Adjust the padding as needed */
+}
+
+/* Add margin to table rows */
+tr {
+  margin-bottom: 20px; /* Increase the margin-bottom to add more space */
+}
+
+/* Center text in table cells */
+td {
+  text-align: center;
+}
+
+/* Flexbox styling for table header */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Center text in table headers */
+th {
+  text-align: center;
+}
+
+
+
