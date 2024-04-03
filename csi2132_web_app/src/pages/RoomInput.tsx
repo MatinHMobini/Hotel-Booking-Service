@@ -27,28 +27,67 @@ const RoomInput = () => {
     e.preventDefault();
     try {
       const formData = {
-        id: parseInt(e.target.id.value),
+        roomId: parseInt(e.target.roomId.value),
         capacity: parseInt(e.target.capacity.value),
         price: parseFloat(e.target.price.value),
         amenities: e.target.amenities.value,
         viewType: e.target.viewType.value,
         canExtend: e.target.canExtend.checked,
-        hotelId: parseInt(e.target.hotelId.value) // Include hotelId in formData
+        hotelId: parseInt(e.target.hotelId.value),
+        hotelAddress: e.target.hotelAddress.value,
       };
 
       const response = await fetch("http://localhost:3000/rooms", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        method: "GET",
       });
 
       if (response.ok) {
-        console.log("Room inserted successfully");
-        fetchRooms(); // Refresh room list
+        const existingRooms = await response.json();
+        const existingRoom = existingRooms.find(
+            (room) => room.room_id === formData.roomId
+        );
+
+        if (existingRoom) {
+          // Room exists, make PUT request to update
+          const updateResponse = await fetch(
+              `http://localhost:3000/update-room/${formData.roomId}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+              }
+          );
+
+          if (updateResponse.ok) {
+            console.log("Room updated successfully");
+            fetchRooms(); // Refresh room list
+          } else {
+            console.error("Failed to update room");
+          }
+        } else {
+          // Room doesn't exist, make POST request to insert
+          const insertResponse = await fetch(
+              "http://localhost:3000/rooms",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+              }
+          );
+
+          if (insertResponse.ok) {
+            console.log("Room inserted successfully");
+            fetchRooms(); // Refresh room list
+          } else {
+            console.error("Failed to insert room");
+          }
+        }
       } else {
-        console.error("Failed to insert room");
+        console.error("Failed to fetch existing rooms");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -57,13 +96,17 @@ const RoomInput = () => {
 
   const handleDelete = async (roomId) => {
     try {
-      const response = await fetch(`http://localhost:3000/rooms/${roomId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+          `http://localhost:3000/rooms/${roomId}`,
+          {
+            method: "DELETE",
+          }
+      );
 
       if (response.ok) {
         console.log("Room deleted successfully");
-        fetchRooms(); // Refresh room list
+        // Refresh room list
+        fetchRooms();
       } else {
         console.error("Failed to delete room");
       }
@@ -77,98 +120,96 @@ const RoomInput = () => {
         <div>
           <form className="inputForm" onSubmit={handleSubmit} method="post">
             <div className="container">
-              <div className="form-group">
-                <label htmlFor="id">
-                  <b>Room ID</b>
-                </label>
-                <input
-                    className="inputBlank"
-                    type="number"
-                    placeholder="Enter Room ID"
-                    name="id"
-                    min={0}
-                    required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="capacity">
-                  <b>Capacity</b>
-                </label>
-                <input
-                    className="inputBlank"
-                    type="number"
-                    placeholder="Enter Capacity"
-                    name="capacity"
-                    min={0}
-                    required
-                />
-              </div>
+              <label htmlFor="roomId">
+                <b>Room ID</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="number"
+                  placeholder="Enter Room ID"
+                  name="roomId"
+                  min={0}
+                  required
+              />
 
-              <div className="form-group">
-                <label htmlFor="price">
-                  <b>Price</b>
-                </label>
-                <input
-                    className="inputBlank"
-                    type="number"
-                    placeholder="Enter Price"
-                    name="price"
-                    min={0}
-                    step="0.01"
-                    required
-                />
-              </div>
+              <label htmlFor="capacity">
+                <b>Capacity</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="number"
+                  placeholder="Enter Capacity"
+                  name="capacity"
+                  min={0}
+                  required
+              />
 
-              <div className="form-group">
-                <label htmlFor="amenities">
-                  <b>Amenities</b>
-                </label>
-                <input
-                    className="inputBlank"
-                    type="text"
-                    placeholder="Enter Amenities"
-                    name="amenities"
-                    required
-                />
-              </div>
+              <label htmlFor="price">
+                <b>Price</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="number"
+                  placeholder="Enter Price"
+                  name="price"
+                  min={0}
+                  step="0.01"
+                  required
+              />
 
-              <div className="form-group">
-                <label htmlFor="viewType">
-                  <b>View Type</b>
-                </label>
-                <input
-                    className="inputBlank"
-                    type="text"
-                    placeholder="Enter View Type"
-                    name="viewType"
-                    required
-                />
-              </div>
+              <label htmlFor="amenities">
+                <b>Amenities</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="text"
+                  placeholder="Enter Amenities"
+                  name="amenities"
+                  required
+              />
 
-              <div className="form-group">
-                <label htmlFor="canExtend">
-                  <b>Can Extend</b>
-                </label>
-                <input
-                    className="inputCheckbox"
-                    type="checkbox"
-                    name="canExtend"
-                />
-              </div>
+              <label htmlFor="viewType">
+                <b>View Type</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="text"
+                  placeholder="Enter View Type"
+                  name="viewType"
+                  required
+              />
 
-              <div className="form-group">
-                <label htmlFor="hotelId">
-                  <b>Hotel ID</b>
-                </label>
-                <input
-                    className="inputBlank"
-                    type="number"
-                    placeholder="Enter Hotel ID"
-                    name="hotelId"
-                    min={0}
-                    required
-                />
-              </div>
+              <label htmlFor="canExtend">
+                <b>Can Extend</b>
+              </label>
+              <input
+                  className="inputCheckbox"
+                  type="checkbox"
+                  name="canExtend"
+              />
+
+              <label htmlFor="hotelId">
+                <b>Hotel ID</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="number"
+                  placeholder="Enter Hotel ID"
+                  name="hotelId"
+                  min={0}
+                  required
+              />
+
+              <label htmlFor="hotelAddress">
+                <b>Hotel Address</b>
+              </label>
+              <input
+                  className="inputBlank"
+                  type="text"
+                  placeholder="Enter Hotel Address"
+                  name="hotelAddress"
+                  required
+              />
 
               <button type="submit">Insert/Update</button>
             </div>
@@ -184,7 +225,9 @@ const RoomInput = () => {
                 <th>Amenities</th>
                 <th>View Type</th>
                 <th>Can Extend</th>
-                <th>Action</th>
+                <th>Hotel ID</th>
+                <th>Hotel Address</th>
+                <th className="actionColumn">Actions</th>
               </tr>
               </thead>
               <tbody>
@@ -196,8 +239,11 @@ const RoomInput = () => {
                     <td>{room.amenities}</td>
                     <td>{room.view_type}</td>
                     <td>{room.can_extend ? "Yes" : "No"}</td>
+                    <td>{room.hotel_id}</td>
+                    <td>{room.hotel_address}</td>
                     <td>
                       <button
+                          className="deleteButton"
                           style={{ width: "100px", fontSize: "16px" }}
                           onClick={() => handleDelete(room.room_id)}
                       >
@@ -215,5 +261,4 @@ const RoomInput = () => {
 };
 
 export default RoomInput;
-
 

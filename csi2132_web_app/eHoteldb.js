@@ -337,6 +337,30 @@ app.delete("/hotels/:hotelId", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+// Route to update a room
+app.put("/update-room/:roomId", async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const { capacity, price, amenities, viewType, canExtend, hotelId } = req.body;
+
+    // Update the room information in the database
+    await db("room")
+        .where("room_id", "=", roomId)
+        .update({
+          capacity,
+          price,
+          amenities,
+          view_type: viewType,
+          can_extend: canExtend,
+          hotel_id: hotelId,
+        });
+
+    res.json({ message: "Room updated successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 // Route to handle room information
 app.get("/rooms", async (req, res) => {
@@ -349,25 +373,33 @@ app.get("/rooms", async (req, res) => {
   }
 });
 
-// Route to insert a new room
+// Route to handle room information
 app.post("/rooms", async (req, res) => {
   try {
-    const { id, capacity, price, amenities, viewType, canExtend, hotelId } = req.body;
+    const { roomId, capacity, price, amenities, viewType, canExtend, hotelId, hotelAddress } = req.body;
 
-    // Check if hotelId is provided
+    // Ensure that hotelId is not null
     if (!hotelId) {
-      return res.status(400).json({ error: "Hotel ID is required" });
+      return res.status(400).json({ error: "hotelId is required" });
+    }
+
+    // Check if the hotel exists
+    const hotel = await db("hotel").where("hotel_id", hotelId).first();
+
+    if (!hotel) {
+      return res.status(404).json({ error: "Hotel not found" });
     }
 
     // Insert the new room into the database
     await db("room").insert({
-      room_id: id,
+      room_id: roomId,
       capacity,
       price,
       amenities,
       view_type: viewType,
       can_extend: canExtend,
-      hotel_id: hotelId // Include hotel_id in the insert operation
+      hotel_id: hotelId,
+      hotel_address: hotelAddress, // Insert hotel_address along with other room details
     });
 
     res.status(201).json({ message: "Room inserted successfully" });
@@ -376,6 +408,8 @@ app.post("/rooms", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
 
 // Route to delete a room
 app.delete("/rooms/:roomId", async (req, res) => {
@@ -401,6 +435,60 @@ app.get("/totalcapacity", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// Route to handle booking insertion
+app.post("/bookinginsert", async (req, res) => {
+  try {
+    const { customerId, bookingDate, bookingId, roomId } = req.body;
+
+    // Insert the booking into the database
+    await db("booking").insert({
+      customer_id: customerId,
+      booking_date: bookingDate,
+      booking_id: bookingId,
+      room_id: roomId,
+    });
+
+    res.status(201).json({ message: "Booking inserted successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to handle renting insertion
+app.post("/renting", async (req, res) => {
+  try {
+    const { customerId, rentId, checkInDate, checkOutDate, roomId } = req.body;
+
+    // Insert the renting information into the database
+    await db("renting").insert({
+      customer_id: customerId,
+      renting_id: rentId,
+      checkin_date: checkInDate,
+      checkout_date: checkOutDate,
+      room_id: roomId,
+    });
+
+    res.status(201).json({ message: "Renting confirmed successfully" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Route to handle fetching all renting entries
+app.get("/getrentings", async (req, res) => {
+  try {
+    const rentingEntries = await db.select("*").from("renting");
+    res.status(200).json(rentingEntries);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
 
 app.listen(3000, () => {

@@ -40,20 +40,20 @@ const CustomerInput = () => {
       if (response.ok) {
         const existingCustomers = await response.json();
         const existingCustomer = existingCustomers.find(
-          (customer) => customer.customer_id === formData.id
+            (customer) => customer.customer_id === formData.id
         );
 
         if (existingCustomer) {
           // Customer ID exists, make PUT request to update
           const updateResponse = await fetch(
-            `http://localhost:3000/update-customer/${formData.id}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formData),
-            }
+              `http://localhost:3000/update-customer/${formData.id}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+              }
           );
 
           if (updateResponse.ok) {
@@ -64,16 +64,13 @@ const CustomerInput = () => {
           }
         } else {
           // Customer ID doesn't exist, make POST request to insert
-          const insertResponse = await fetch(
-            "http://localhost:3000/insert-customer",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formData),
-            }
-          );
+          const insertResponse = await fetch("http://localhost:3000/insert-customer", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
 
           if (insertResponse.ok) {
             console.log("Customer inserted successfully");
@@ -90,14 +87,13 @@ const CustomerInput = () => {
     }
   };
 
+
+
   const handleDelete = async (customerId) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/customers/${customerId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`http://localhost:3000/customers/${customerId}`, {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         console.log("Customer deleted successfully");
@@ -112,63 +108,63 @@ const CustomerInput = () => {
   };
 
   return (
-    <AnimationFadeIn>
-      <div>
-        <form className="inputForm" onSubmit={handleSubmit} method="post">
-          <div className="container">
-            <div className="form-group">
-              <label htmlFor="id">
-                <b>Customer ID</b>
-              </label>
-              <input
-                className="inputBlank"
-                type="number"
-                placeholder="Enter Customer ID"
-                name="id"
-                min={0}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="name">
-                <b>Customer Name</b>
-              </label>
-              <input
-                className="inputBlank"
-                type="text"
-                placeholder="Enter Full Name"
-                name="name"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="address">
-                <b>Address</b>
-              </label>
-              <input
-                className="inputBlank"
-                type="text"
-                placeholder="Enter Address"
-                name="address"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="date">
-                <b>Date of Registration</b>
-              </label>
-              <input className="inputBlank" type="date" name="date" required />
-            </div>
-
-            <button type="submit">Insert/Update</button>
-          </div>
-        </form>
+      <AnimationFadeIn>
         <div>
-          <h2>Customer Information:</h2>
-          <table>
-            <thead>
+          <form className="inputForm" onSubmit={handleSubmit} method="post">
+            <div className="container">
+              <div className="form-group">
+                <label htmlFor="id">
+                  <b>Customer ID</b>
+                </label>
+                <input
+                    className="inputBlank"
+                    type="number"
+                    placeholder="Enter Customer ID"
+                    name="id"
+                    min={0}
+                    required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="name">
+                  <b>Customer Name</b>
+                </label>
+                <input
+                    className="inputBlank"
+                    type="text"
+                    placeholder="Enter Full Name"
+                    name="name"
+                    required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="address">
+                  <b>Address</b>
+                </label>
+                <input
+                    className="inputBlank"
+                    type="text"
+                    placeholder="Enter Address"
+                    name="address"
+                    required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="date">
+                  <b>Date of Registration</b>
+                </label>
+                <input className="inputBlank" type="date" name="date" required />
+              </div>
+
+              <button type="submit">Insert</button>
+            </div>
+          </form>
+          <div>
+            <h2>Customer Information:</h2>
+            <table>
+              <thead>
               <tr>
                 <th>Customer ID</th>
                 <th>Name</th>
@@ -176,31 +172,35 @@ const CustomerInput = () => {
                 <th>Date of Registration</th>
                 <th className="actionColumn">Actions</th>
               </tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
               {customers.map((customer) => (
-                <tr key={customer.customer_id}>
-                  <td>{customer.customer_id}</td>
-                  <td>{customer.customer_name}</td>
-                  <td>{customer.customer_address}</td>
-                  <td>{customer.registration_date}</td>
-                  <td>
-                    <button
-                      className="deleteButton"
-                      style={{ width: "100px", fontSize: "16px" }}
-                      onClick={() => handleDelete(customer.customer_id)}
-                    >
-                      DELETE
-                    </button>
-                  </td>
-                </tr>
+                  <tr key={customer.customer_id}>
+                    <td>{customer.customer_id}</td>
+                    <td>{customer.customer_name}</td>
+                    <td>{customer.customer_address}</td>
+                    <td>{customer.registration_date}</td>
+                    <td>
+                      <button
+                          className="deleteButton"
+                          style={{ width: "100px", fontSize: "16px" }}
+                          onClick={() => handleDelete(customer.customer_id)}
+                      >
+                        DELETE
+                      </button>
+                    </td>
+                  </tr>
               ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </AnimationFadeIn>
+      </AnimationFadeIn>
   );
 };
 
 export default CustomerInput;
+
+
+
+
