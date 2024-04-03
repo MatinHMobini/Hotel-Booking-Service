@@ -12,10 +12,20 @@ app.use(cors());
 // Import required modules and setup the server
 app.post("/hotel", async (req, res) => {
   try {
-    const { roomCapacity, price, area, hotelChain, category, numberOfRoomsInHotel } = req.body;
+    const {
+      roomCapacity,
+      price,
+      area,
+      hotelChain,
+      category,
+      numberOfRoomsInHotel,
+    } = req.body;
 
-    let filteredRooms = db("room")
-        .join("hotel as h1", "room.hotel_id", "h1.hotel_id"); // Alias the first hotel table as h1
+    let filteredRooms = db("room").join(
+      "hotel as h1",
+      "room.hotel_id",
+      "h1.hotel_id"
+    ); // Alias the first hotel table as h1
 
     if (roomCapacity) {
       filteredRooms = filteredRooms.where("room.capacity", "=", roomCapacity);
@@ -28,9 +38,9 @@ app.post("/hotel", async (req, res) => {
     }
     if (hotelChain) {
       filteredRooms = filteredRooms
-          .join("owns", "room.hotel_id", "owns.hotel_id")
-          .join("hotel_chain", "owns.chain_name", "hotel_chain.chain_name")
-          .where("hotel_chain.chain_name", "=", hotelChain);
+        .join("owns", "room.hotel_id", "owns.hotel_id")
+        .join("hotel_chain", "owns.chain_name", "hotel_chain.chain_name")
+        .where("hotel_chain.chain_name", "=", hotelChain);
     }
     if (category) {
       filteredRooms = filteredRooms.where("h1.category", "=", category); // Use the alias h1 for the first hotel table
@@ -38,22 +48,20 @@ app.post("/hotel", async (req, res) => {
     if (numberOfRoomsInHotel) {
       // Filter rooms based on the number of rooms in the hotel
       filteredRooms = filteredRooms
-          .join("hotel as h2", "room.hotel_id", "h2.hotel_id")
-          .where("h2.number_of_rooms", "=", numberOfRoomsInHotel);
+        .join("hotel as h2", "room.hotel_id", "h2.hotel_id")
+        .where("h2.number_of_rooms", "=", numberOfRoomsInHotel);
     }
 
-
-    filteredRooms = filteredRooms.whereNull("room.booking_id")
-        .select(
-            "room.room_id",
-            "room.capacity",
-            "room.room_number",
-            "room.price",
-            "room.amenities",
-            "room.view_type",
-            "room.can_extend",
-            "h1.address as hotel_address" // Use the alias h1 for the first hotel table
-        );
+    filteredRooms = filteredRooms.whereNull("room.booking_id").select(
+      "room.room_id",
+      "room.capacity",
+      "room.room_number",
+      "room.price",
+      "room.amenities",
+      "room.view_type",
+      "room.can_extend",
+      "h1.address as hotel_address" // Use the alias h1 for the first hotel table
+    );
 
     const result = await filteredRooms;
 
@@ -68,17 +76,39 @@ app.post("/hotel", async (req, res) => {
   }
 });
 
-
 app.post("/booking", async (req, res) => {
   try {
-    const { roomCapacity, price, area, hotelChain, category } = req.body;
+    const {
+      startDateFilter,
+      endDateFilter,
+      roomCapacity,
+      price,
+      area,
+      hotelChain,
+      category,
+    } = req.body;
 
     let filteredBookings = db("room")
-        .join("hotel", "room.hotel_id", "hotel.hotel_id")
-        .leftJoin("booking", "room.booking_id", "booking.booking_id"); // Left join with booking table
+      .join("hotel", "room.hotel_id", "hotel.hotel_id")
+      .leftJoin("booking", "room.booking_id", "booking.booking_id"); // Left join with booking table
+
+    filteredBookings = filteredBookings.where(
+      "booking.booking_date",
+      ">=",
+      startDateFilter
+    );
+    filteredBookings = filteredBookings.where(
+      "booking.booking_date",
+      "<=",
+      endDateFilter
+    );
 
     if (roomCapacity) {
-      filteredBookings = filteredBookings.where("room.capacity", "=", roomCapacity);
+      filteredBookings = filteredBookings.where(
+        "room.capacity",
+        "=",
+        roomCapacity
+      );
     }
     if (price) {
       filteredBookings = filteredBookings.where("room.price", "<=", price);
@@ -88,26 +118,32 @@ app.post("/booking", async (req, res) => {
     }
     if (hotelChain) {
       filteredBookings = filteredBookings
-          .join("owns", "room.hotel_id", "owns.hotel_id")
-          .join("hotel_chain", "owns.chain_name", "hotel_chain.chain_name")
-          .where("hotel_chain.chain_name", "=", hotelChain);
+        .join("owns", "room.hotel_id", "owns.hotel_id")
+        .join("hotel_chain", "owns.chain_name", "hotel_chain.chain_name")
+        .where("hotel_chain.chain_name", "=", hotelChain);
     }
     if (category) {
-      filteredBookings = filteredBookings.where("hotel.category", "=", category);
+      filteredBookings = filteredBookings.where(
+        "hotel.category",
+        "=",
+        category
+      );
     }
 
-    filteredBookings = filteredBookings.whereNotNull("room.booking_id") // Disregard entries where booking_id is null
-        .select(
-            "room.room_id",
-            "room.capacity",
-            "room.room_number",
-            "room.price",
-            "room.amenities",
-            "room.view_type",
-            "room.can_extend",
-            "hotel.address as hotel_address",
-            "booking.booking_id" // Include booking_id
-        );
+    filteredBookings = filteredBookings
+      .whereNotNull("room.booking_id") // Disregard entries where booking_id is null
+      .select(
+        "room.room_id",
+        "room.capacity",
+        "room.room_number",
+        "room.price",
+        "room.amenities",
+        "room.view_type",
+        "room.can_extend",
+        "hotel.address as hotel_address",
+        "booking.booking_id", // Include booking_id
+        "booking.booking_date"
+      );
 
     const result = await filteredBookings;
 
@@ -139,13 +175,11 @@ app.put("/update-customer/:id", async (req, res) => {
     const { name, address, date } = req.body;
 
     // Update the customer information in the database
-    await db("customer")
-        .where("customer_id", "=", id)
-        .update({
-          customer_name: name,
-          customer_address: address,
-          registration_date: date,
-        });
+    await db("customer").where("customer_id", "=", id).update({
+      customer_name: name,
+      customer_address: address,
+      registration_date: date,
+    });
 
     res.json({ message: "Customer updated successfully" });
   } catch (error) {
@@ -209,7 +243,7 @@ app.post("/insert-employee", async (req, res) => {
       employee_address: address,
       e_role: role,
       hotel_id: hotelid,
-      hotel_address: hoteladdress
+      hotel_address: hoteladdress,
     });
 
     res.status(201).json({ message: "Employee inserted successfully" });
@@ -226,15 +260,13 @@ app.put("/update-employee/:sin", async (req, res) => {
     const { name, address, role, hotelid, hoteladdress } = req.body;
 
     // Update the employee information in the database
-    await db("employee")
-        .where("employee_sin", "=", sin)
-        .update({
-          employee_name: name,
-          employee_address: address,
-          e_role: role,
-          hotel_id: hotelid,
-          hotel_address: hoteladdress
-        });
+    await db("employee").where("employee_sin", "=", sin).update({
+      employee_name: name,
+      employee_address: address,
+      e_role: role,
+      hotel_id: hotelid,
+      hotel_address: hoteladdress,
+    });
 
     res.json({ message: "Employee updated successfully" });
   } catch (error) {
@@ -284,17 +316,16 @@ app.get("/hotels", async (req, res) => {
 app.put("/hotels/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { address, category, numberOfRooms, emailAddress, phoneNumber } = req.body;
+    const { address, category, numberOfRooms, emailAddress, phoneNumber } =
+      req.body;
 
-    await db("hotel")
-      .where("hotel_id", "=", id)
-      .update({
-        address,
-        category,
-        number_of_rooms: numberOfRooms,
-        email_address: emailAddress,
-        phone_number: phoneNumber
-      });
+    await db("hotel").where("hotel_id", "=", id).update({
+      address,
+      category,
+      number_of_rooms: numberOfRooms,
+      email_address: emailAddress,
+      phone_number: phoneNumber,
+    });
 
     res.json({ message: "Hotel updated successfully" });
   } catch (error) {
@@ -306,7 +337,8 @@ app.put("/hotels/:id", async (req, res) => {
 // Route to insert a new hotel
 app.post("/hotels", async (req, res) => {
   try {
-    const { id, address, category, numberOfRooms, emailAddress, phoneNumber } = req.body;
+    const { id, address, category, numberOfRooms, emailAddress, phoneNumber } =
+      req.body;
 
     await db("hotel").insert({
       hotel_id: id,
@@ -314,7 +346,7 @@ app.post("/hotels", async (req, res) => {
       category,
       number_of_rooms: numberOfRooms,
       email_address: emailAddress,
-      phone_number: phoneNumber
+      phone_number: phoneNumber,
     });
 
     res.status(201).json({ message: "Hotel inserted successfully" });
@@ -341,19 +373,18 @@ app.delete("/hotels/:hotelId", async (req, res) => {
 app.put("/update-room/:roomId", async (req, res) => {
   try {
     const { roomId } = req.params;
-    const { capacity, price, amenities, viewType, canExtend, hotelId } = req.body;
+    const { capacity, price, amenities, viewType, canExtend, hotelId } =
+      req.body;
 
     // Update the room information in the database
-    await db("room")
-        .where("room_id", "=", roomId)
-        .update({
-          capacity,
-          price,
-          amenities,
-          view_type: viewType,
-          can_extend: canExtend,
-          hotel_id: hotelId,
-        });
+    await db("room").where("room_id", "=", roomId).update({
+      capacity,
+      price,
+      amenities,
+      view_type: viewType,
+      can_extend: canExtend,
+      hotel_id: hotelId,
+    });
 
     res.json({ message: "Room updated successfully" });
   } catch (error) {
@@ -376,7 +407,16 @@ app.get("/rooms", async (req, res) => {
 // Route to handle room information
 app.post("/rooms", async (req, res) => {
   try {
-    const { roomId, capacity, price, amenities, viewType, canExtend, hotelId, hotelAddress } = req.body;
+    const {
+      roomId,
+      capacity,
+      price,
+      amenities,
+      viewType,
+      canExtend,
+      hotelId,
+      hotelAddress,
+    } = req.body;
 
     // Ensure that hotelId is not null
     if (!hotelId) {
@@ -409,8 +449,6 @@ app.post("/rooms", async (req, res) => {
   }
 });
 
-
-
 // Route to delete a room
 app.delete("/rooms/:roomId", async (req, res) => {
   try {
@@ -427,8 +465,11 @@ app.delete("/rooms/:roomId", async (req, res) => {
 });
 
 app.get("/totalcapacity", async (req, res) => {
-  try {// Order by hotel_id in ascending order
-    const totalCapacityPerHotel = await db("totalcapacity").orderBy("hotel_id", "asc").select("*");
+  try {
+    // Order by hotel_id in ascending order
+    const totalCapacityPerHotel = await db("totalcapacity")
+      .orderBy("hotel_id", "asc")
+      .select("*");
     res.json(totalCapacityPerHotel);
   } catch (error) {
     console.error("Error:", error);
@@ -488,13 +529,9 @@ app.get("/getrentings", async (req, res) => {
   }
 });
 
-
-
-
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
-
 
 //filteredRooms.select("*").then(console.log)
 //db("hotel_chain").select("*").then(console.log)
