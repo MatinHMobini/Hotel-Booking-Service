@@ -78,7 +78,7 @@ const CustomerPage = () => {
         <AnimationFadeIn>
             <Slideshow />
             <h1>
-                <b>Rooms Per Area:</b>
+                <b>Available Rooms Per Area:</b>
             </h1>
             <div>
                 {roomsPerArea.map((area) => (
