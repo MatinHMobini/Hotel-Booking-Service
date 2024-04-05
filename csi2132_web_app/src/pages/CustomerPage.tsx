@@ -129,5 +129,5 @@ const CustomerPage = () => {
         </AnimationFadeIn>
     );
 };
-
+//Return
 export default CustomerPage;
