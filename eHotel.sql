@@ -62,7 +62,6 @@ create table room (
                       room_number int,
                       room_id int,
                       price int,
-    --booking_id int,
                       hotel_address varchar(45),
                       hotel_id int,
                       amenities varchar(45),
