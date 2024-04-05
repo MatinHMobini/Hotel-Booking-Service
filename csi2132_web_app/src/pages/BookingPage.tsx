@@ -94,7 +94,7 @@ const BookingPage = () => {
           {location.state.view_type}, Can Extend:{" "}
           {location.state.can_extend ? "Yes" : "No"}
         </p>
-        
+
       </div>
     </AnimationFadeIn>
   );
