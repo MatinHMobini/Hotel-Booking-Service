@@ -1,183 +1,170 @@
 Create table Hotel_Chain (
-	chain_name varchar(45),
-	central_address varchar(45),
-	email_addresses varchar(45),
-	phone_numbers varchar(45),
-	number_of_hotels int,
-		primary key(chain_name, central_address)
+                             chain_name varchar(45),
+                             central_address varchar(45),
+                             email_addresses varchar(45),
+                             phone_numbers varchar(45),
+                             number_of_hotels int,
+                             primary key(chain_name, central_address)
 );
 
 
 create table Hotel (
-	hotel_id int,
-	address varchar(45),
-	category int not null CHECK (category >= 0 AND category <= 5),
-	number_of_rooms int not null CHECK (category >= 0 AND category <= 999),
-	email_address varchar(45),
-	phone_number varchar(45),
-		primary key(hotel_id, address)
+                       hotel_id int,
+                       address varchar(45),
+                       category int not null CHECK (category >= 0 AND category <= 5),
+                       number_of_rooms int not null CHECK (category >= 0 AND category <= 999),
+                       email_address varchar(45),
+                       phone_number varchar(45),
+                       primary key(hotel_id, address)
 );
 
 
 CREATE TABLE owns (
-    chain_name VARCHAR(45),
-    central_address VARCHAR(45),
-    hotel_id INT,
-    hotel_address VARCHAR(45),
-    PRIMARY KEY (chain_name, central_address, hotel_id, hotel_address),
-    FOREIGN KEY (chain_name, central_address) REFERENCES Hotel_Chain (chain_name, central_address) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (hotel_id, hotel_address) REFERENCES Hotel (hotel_id, address) ON DELETE CASCADE ON UPDATE CASCADE
+                      chain_name VARCHAR(45),
+                      central_address VARCHAR(45),
+                      hotel_id INT,
+                      hotel_address VARCHAR(45),
+                      PRIMARY KEY (chain_name, central_address, hotel_id, hotel_address),
+                      FOREIGN KEY (chain_name, central_address) REFERENCES Hotel_Chain (chain_name, central_address) ON DELETE CASCADE ON UPDATE CASCADE,
+                      FOREIGN KEY (hotel_id, hotel_address) REFERENCES Hotel (hotel_id, address) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
 create table employee (
-	employee_sin int,
-	employee_name varchar(45),
-	employee_address varchar(45),
-	e_role varchar(45),
-	hotel_id int,
-	hotel_address varchar(45),
-		primary key(employee_sin),
-		foreign key(hotel_id, hotel_address) REFERENCES Hotel (hotel_id, address) ON DELETE CASCADE ON UPDATE CASCADE
+                          employee_sin int,
+                          employee_name varchar(45),
+                          employee_address varchar(45),
+                          e_role varchar(45),
+                          hotel_id int,
+                          hotel_address varchar(45),
+                          primary key(employee_sin),
+                          foreign key(hotel_id, hotel_address) REFERENCES Hotel (hotel_id, address) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table renting_archive (
-	renting_id int,
-	cust_id int,
-	room_id int,
-	checkin_date varchar(45),
-	checkout_date varchar(45),
-		primary key(renting_id)
+                                 renting_id int,
+                                 cust_id int,
+                                 room_id int,
+                                 checkin_date varchar(45),
+                                 checkout_date varchar(45),
+                                 primary key(renting_id)
 );
 
 create table booking_archive (
-	booking_id int,
-	cust_id int,
-	room_id int,
-	booking_date varchar(45),
-		primary key(booking_id)
+                                 booking_id int,
+                                 cust_id int,
+                                 room_id int,
+                                 booking_date varchar(45),
+                                 primary key(booking_id)
 );
 
 create table room (
-	room_number int,
-	room_id int,
-	price int,
-	hotel_address varchar(45),
-	hotel_id int,
-	amenities varchar(45),
-	capacity int,
-	view_type varchar(45),
-	can_extend boolean,
-	damages varchar(45),
-		primary key(room_id),
-		foreign key(hotel_address, hotel_id) references Hotel(address, hotel_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-
---alter table room 
-	--add column hotel_id int references Hotel(hotel_id) ON DELETE CASCADE ON UPDATE CASCADE;
-	
-
-create table composed_of (
-	room_id int,
-	hotel_id int,
-	address varchar(45),
-		primary key(room_id,hotel_id,address),
-		foreign key(room_id) references room (room_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(hotel_id, address) references Hotel (hotel_id, address) ON DELETE CASCADE ON UPDATE CASCADE
+                      room_number int,
+                      room_id int,
+                      price int,
+    --booking_id int,
+                      hotel_address varchar(45),
+                      hotel_id int,
+                      amenities varchar(45),
+                      capacity int,
+                      view_type varchar(45),
+                      can_extend boolean,
+                      damages varchar(45),
+                      primary key(room_id),
+                      foreign key(hotel_address, hotel_id) references Hotel(address, hotel_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table booking (
-	booking_id int,
-	room_id int,
-	booking_date varchar(45),
-		primary key(booking_id),
-		foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE	
+                         booking_id int,
+                         room_id int,
+                         booking_date varchar(45),
+                         primary key(booking_id),
+                         foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 alter table room
-	add column booking_id int references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE;
-		
+    add column booking_id int references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE;
+
 create table customer(
-	customer_id int,
-	customer_name varchar(45),
-	customer_address varchar(45),
-	registration_date varchar(45),
-	booking_id int,
-	room_id int,
-		primary key(customer_id),
-		foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE
+                         customer_id int,
+                         customer_name varchar(45),
+                         customer_address varchar(45),
+                         registration_date varchar(45),
+                         booking_id int,
+                         room_id int,
+                         primary key(customer_id),
+                         foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                         foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 alter table booking
-	add column customer_id int references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE;
+    add column customer_id int references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
 create table creates(
-	booking_id int,
-	customer_id int,
-		primary key(booking_id,customer_id),
-		foreign key(customer_id) references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE
-);	
+                        booking_id int,
+                        customer_id int,
+                        primary key(booking_id,customer_id),
+                        foreign key(customer_id) references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                        foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 
 create table renting(
-	renting_id int,
-	customer_id int,
-	room_id int,
-	checkin_date varchar(45),
-	checkout_date varchar(45),
-		primary key(renting_id),
-		foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(customer_id) references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE
+                        renting_id int,
+                        customer_id int,
+                        room_id int,
+                        checkin_date varchar(45),
+                        checkout_date varchar(45),
+                        primary key(renting_id),
+                        foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                        foreign key(customer_id) references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
 create table non_booking_checkin(--when doing this, the employee makes a booking then transfers that into a renting
-	booking_id int,
-	renting_id int,
-	has_paid boolean,
-		primary key(booking_id, renting_id),
-		foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
+                                    booking_id int,
+                                    renting_id int,
+                                    has_paid boolean,
+                                    primary key(booking_id, renting_id),
+                                    foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                                    foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
 create table checkin(
-	booking_id int,
-	renting_id int,
-	has_paid boolean,
-		primary key(booking_id, renting_id),
-		foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
+                        booking_id int,
+                        renting_id int,
+                        has_paid boolean,
+                        primary key(booking_id, renting_id),
+                        foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                        foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
 create table occupies(
-	room_id int,
-	renting_id int,
-		primary key(room_id, renting_id),
-		foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
+                         room_id int,
+                         renting_id int,
+                         primary key(room_id, renting_id),
+                         foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                         foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
 create table has_a(
-	customer_id int,
-	renting_id int,
-		primary key(customer_id, renting_id),
-		foreign key(customer_id) references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
+                      customer_id int,
+                      renting_id int,
+                      primary key(customer_id, renting_id),
+                      foreign key(customer_id) references customer(customer_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                      foreign key(renting_id) references renting(renting_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 create table reserves(
-	booking_id int,
-	room_id int,
-		primary key(booking_id,room_id),
-		foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE,
-		foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE
+                         booking_id int,
+                         room_id int,
+                         primary key(booking_id,room_id),
+                         foreign key(room_id) references room(room_id) ON DELETE CASCADE ON UPDATE CASCADE,
+                         foreign key(booking_id) references booking(booking_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -185,30 +172,30 @@ create table reserves(
 CREATE OR REPLACE FUNCTION insert_booking_archive()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO booking_archive (booking_id, cust_id, room_id, booking_date)
-    VALUES (NEW.booking_id, NEW.customer_id, NEW.room_id, NEW.booking_date);
-    RETURN NEW;
+INSERT INTO booking_archive (booking_id, cust_id, room_id, booking_date)
+VALUES (NEW.booking_id, NEW.customer_id, NEW.room_id, NEW.booking_date);
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER insert_booking_archive_trigger
-	AFTER INSERT ON booking
-	FOR EACH ROW EXECUTE FUNCTION insert_booking_archive();
+    AFTER INSERT ON booking
+    FOR EACH ROW EXECUTE FUNCTION insert_booking_archive();
 
 
 
 CREATE OR REPLACE FUNCTION insert_renting_archive()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO renting_archive (renting_id, cust_id, room_id, checkin_date, checkout_date)
-    VALUES (NEW.renting_id, NEW.customer_id, NEW.room_id, NEW.checkin_date, NEW.checkout_date);
-    RETURN NEW;
+INSERT INTO renting_archive (renting_id, cust_id, room_id, checkin_date, checkout_date)
+VALUES (NEW.renting_id, NEW.customer_id, NEW.room_id, NEW.checkin_date, NEW.checkout_date);
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER insert_renting_archive_trigger
-AFTER INSERT ON renting
-FOR EACH ROW EXECUTE FUNCTION insert_renting_archive();
+    AFTER INSERT ON renting
+    FOR EACH ROW EXECUTE FUNCTION insert_renting_archive();
 
 
 
@@ -216,64 +203,64 @@ FOR EACH ROW EXECUTE FUNCTION insert_renting_archive();
 -- Insert data for Hotel_Chain table
 INSERT INTO Hotel_Chain (chain_name, central_address, email_addresses, phone_numbers, number_of_hotels)
 VALUES
-('Chain1', 'Toronto', 'chain1@example.com', '123-456-7890', 8),
-('Chain2', 'Vancouver', 'chain2@example.com', '123-456-7891', 8),
-('Chain3', 'Ottawa', 'chain3@example.com', '123-456-7892', 8),
-('Chain4', 'Toronto', 'chain4@example.com', '123-456-7893', 8),
-('Chain5', 'Vancouver', 'chain5@example.com', '123-456-7894', 8);
+    ('Chain1', 'Toronto', 'chain1@example.com', '123-456-7890', 8),
+    ('Chain2', 'Vancouver', 'chain2@example.com', '123-456-7891', 8),
+    ('Chain3', 'Ottawa', 'chain3@example.com', '123-456-7892', 8),
+    ('Chain4', 'Toronto', 'chain4@example.com', '123-456-7893', 8),
+    ('Chain5', 'Vancouver', 'chain5@example.com', '123-456-7894', 8);
 
 -- Insert data for Hotel table
 INSERT INTO Hotel (hotel_id, address, category, number_of_rooms, email_address, phone_number)
 VALUES
 -- Hotels for Chain1
-(1, 'Address1', 3, 100, 'hotel1@example.com', '111-222-3333'),
-(2, 'Address2', 4, 120, 'hotel2@example.com', '222-333-4444'),
-(3, 'Address3', 3, 110, 'hotel3@example.com', '333-444-5555'),
-(4, 'Address4', 4, 130, 'hotel4@example.com', '444-555-6666'),
-(5, 'Address5', 5, 140, 'hotel5@example.com', '555-666-7777'),
-(6, 'Address6', 3, 120, 'hotel6@example.com', '666-777-8888'),
-(7, 'Address7', 4, 130, 'hotel7@example.com', '777-888-9999'),
-(8, 'Address8', 5, 150, 'hotel8@example.com', '888-999-0000'),
+(1, 'Address1', 3, 5, 'hotel1@example.com', '111-222-3333'),
+(2, 'Address2', 4, 5, 'hotel2@example.com', '222-333-4444'),
+(3, 'Address3', 3, 5, 'hotel3@example.com', '333-444-5555'),
+(4, 'Address4', 4, 5, 'hotel4@example.com', '444-555-6666'),
+(5, 'Address5', 5, 5, 'hotel5@example.com', '555-666-7777'),
+(6, 'Address6', 3, 5, 'hotel6@example.com', '666-777-8888'),
+(7, 'Address7', 4, 5, 'hotel7@example.com', '777-888-9999'),
+(8, 'Address8', 5, 5, 'hotel8@example.com', '888-999-0000'),
 
 -- Hotels for Chain2
-(9, 'Address9', 3, 125, 'hotel9@example.com', '999-000-1111'),
-(10, 'Address10', 4, 135, 'hotel10@example.com', '000-111-2222'),
-(11, 'Address11', 3, 115, 'hotel11@example.com', '111-222-3333'),
-(12, 'Address12', 4, 125, 'hotel12@example.com', '222-333-4444'),
-(13, 'Address13', 5, 145, 'hotel13@example.com', '333-444-5555'),
-(14, 'Address14', 3, 115, 'hotel14@example.com', '444-555-6666'),
-(15, 'Address15', 4, 125, 'hotel15@example.com', '555-666-7777'),
-(16, 'Address16', 5, 135, 'hotel16@example.com', '666-777-8888'),
+(9, 'Address9', 3, 5, 'hotel9@example.com', '999-000-1111'),
+(10, 'Address10', 4, 5, 'hotel10@example.com', '000-111-2222'),
+(11, 'Address11', 3, 5, 'hotel11@example.com', '111-222-3333'),
+(12, 'Address12', 4, 5, 'hotel12@example.com', '222-333-4444'),
+(13, 'Address13', 5, 5, 'hotel13@example.com', '333-444-5555'),
+(14, 'Address14', 3, 5, 'hotel14@example.com', '444-555-6666'),
+(15, 'Address15', 4, 5, 'hotel15@example.com', '555-666-7777'),
+(16, 'Address16', 5, 5, 'hotel16@example.com', '666-777-8888'),
 
 -- Hotels for Chain3
-(17, 'Address17', 3, 120, 'hotel17@example.com', '777-888-9999'),
-(18, 'Address18', 4, 130, 'hotel18@example.com', '888-999-0000'),
-(19, 'Address19', 3, 110, 'hotel19@example.com', '999-000-1111'),
-(20, 'Address20', 4, 120, 'hotel20@example.com', '000-111-2222'),
-(21, 'Address21', 5, 140, 'hotel21@example.com', '111-222-3333'),
-(22, 'Address22', 3, 120, 'hotel22@example.com', '222-333-4444'),
-(23, 'Address23', 4, 130, 'hotel23@example.com', '333-444-5555'),
-(24, 'Address24', 5, 150, 'hotel24@example.com', '444-555-6666'),
+(17, 'Address17', 3, 5, 'hotel17@example.com', '777-888-9999'),
+(18, 'Address18', 4, 5, 'hotel18@example.com', '888-999-0000'),
+(19, 'Address19', 3, 5, 'hotel19@example.com', '999-000-1111'),
+(20, 'Address20', 4, 5, 'hotel20@example.com', '000-111-2222'),
+(21, 'Address21', 5, 5, 'hotel21@example.com', '111-222-3333'),
+(22, 'Address22', 3, 5, 'hotel22@example.com', '222-333-4444'),
+(23, 'Address23', 4, 5, 'hotel23@example.com', '333-444-5555'),
+(24, 'Address24', 5, 5, 'hotel24@example.com', '444-555-6666'),
 
 -- Hotels for Chain4
-(25, 'Address25', 3, 115, 'hotel25@example.com', '555-666-7777'),
-(26, 'Address26', 4, 125, 'hotel26@example.com', '666-777-8888'),
-(27, 'Address27', 3, 105, 'hotel27@example.com', '777-888-9999'),
-(28, 'Address28', 4, 115, 'hotel28@example.com', '888-999-0000'),
-(29, 'Address29', 5, 135, 'hotel29@example.com', '999-000-1111'),
-(30, 'Address30', 3, 115, 'hotel30@example.com', '000-111-2222'),
-(31, 'Address31', 4, 125, 'hotel31@example.com', '111-222-3333'),
-(32, 'Address32', 5, 135, 'hotel32@example.com', '222-333-4444'),
+(25, 'Address25', 3, 5, 'hotel25@example.com', '555-666-7777'),
+(26, 'Address26', 4, 5, 'hotel26@example.com', '666-777-8888'),
+(27, 'Address27', 3, 5, 'hotel27@example.com', '777-888-9999'),
+(28, 'Address28', 4, 5, 'hotel28@example.com', '888-999-0000'),
+(29, 'Address29', 5, 5, 'hotel29@example.com', '999-000-1111'),
+(30, 'Address30', 3, 5, 'hotel30@example.com', '000-111-2222'),
+(31, 'Address31', 4, 5, 'hotel31@example.com', '111-222-3333'),
+(32, 'Address32', 5, 5, 'hotel32@example.com', '222-333-4444'),
 
 -- Hotels for Chain5
-(33, 'Address33', 3, 110, 'hotel33@example.com', '333-444-5555'),
-(34, 'Address34', 4, 120, 'hotel34@example.com', '444-555-6666'),
-(35, 'Address35', 3, 100, 'hotel35@example.com', '555-666-7777'),
-(36, 'Address36', 4, 110, 'hotel36@example.com', '666-777-8888'),
-(37, 'Address37', 5, 130, 'hotel37@example.com', '777-888-9999'),
-(38, 'Address38', 3, 110, 'hotel38@example.com', '888-999-0000'),
-(39, 'Address39', 4, 120, 'hotel39@example.com', '999-000-1111'),
-(40, 'Address40', 5, 140, 'hotel40@example.com', '000-111-2222');
+(33, 'Address33', 3, 5, 'hotel33@example.com', '333-444-5555'),
+(34, 'Address34', 4, 5, 'hotel34@example.com', '444-555-6666'),
+(35, 'Address35', 3, 5, 'hotel35@example.com', '555-666-7777'),
+(36, 'Address36', 4, 5, 'hotel36@example.com', '666-777-8888'),
+(37, 'Address37', 5, 5, 'hotel37@example.com', '777-888-9999'),
+(38, 'Address38', 3, 5, 'hotel38@example.com', '888-999-0000'),
+(39, 'Address39', 4, 5, 'hotel39@example.com', '999-000-1111'),
+(40, 'Address40', 5, 5, 'hotel40@example.com', '000-111-2222');
 
 -- Insert data for owns table
 INSERT INTO owns (chain_name, central_address, hotel_id, hotel_address)
@@ -612,6 +599,9 @@ VALUES
 (299, 199, 520, 'Address40', 40, 'WiFi, TV', 4, 'Mountain', TRUE, NULL),
 (300, 200, 530, 'Address40', 40, 'WiFi, TV', 5, 'Sea', TRUE, NULL);
 
+
+
+
 -- Insert managers for each hotel in each hotel chain
 INSERT INTO employee (employee_sin, employee_name, employee_address, e_role, hotel_id, hotel_address)
 VALUES
@@ -666,26 +656,12 @@ VALUES
 (40, 'Manager1 Chain5 Hotel40', 'Address40', 'Manager', 40, 'Address40');
 
 
-CREATE OR REPLACE FUNCTION insert_into_composed_of()
-    RETURNS TRIGGER AS $$
-BEGIN
-    INSERT INTO composed_of (room_id, hotel_id, address)
-    VALUES (NEW.room_id, NEW.hotel_id, NEW.hotel_address);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER insert_into_composed_of_trigger
-    AFTER INSERT ON room
-    FOR EACH ROW EXECUTE FUNCTION insert_into_composed_of();
-
-
 CREATE OR REPLACE FUNCTION update_reserves()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO reserves (booking_id, room_id)
-    VALUES (NEW.booking_id, NEW.room_id);
-    RETURN NEW;
+INSERT INTO reserves (booking_id, room_id)
+VALUES (NEW.booking_id, NEW.room_id);
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -696,11 +672,11 @@ CREATE TRIGGER update_reserves_trigger
 
 
 CREATE OR REPLACE FUNCTION insert_has_a()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO has_a (customer_id, renting_id)
-    VALUES (NEW.customer_id, NEW.renting_id);
-    RETURN NEW;
+INSERT INTO has_a (customer_id, renting_id)
+VALUES (NEW.customer_id, NEW.renting_id);
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -711,11 +687,11 @@ CREATE TRIGGER insert_has_a_trigger
 
 
 CREATE OR REPLACE FUNCTION insert_occupies()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO occupies (room_id, renting_id)
-    VALUES (NEW.room_id, NEW.renting_id);
-    RETURN NEW;
+INSERT INTO occupies (room_id, renting_id)
+VALUES (NEW.room_id, NEW.renting_id);
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -725,11 +701,11 @@ CREATE TRIGGER insert_occupies_trigger
 
 
 CREATE OR REPLACE FUNCTION insert_creates()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO creates (booking_id, customer_id)
-    VALUES (NEW.booking_id, NEW.customer_id);
-    RETURN NEW;
+INSERT INTO creates (booking_id, customer_id)
+VALUES (NEW.booking_id, NEW.customer_id);
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -741,13 +717,13 @@ CREATE TRIGGER insert_creates_trigger
 
 -- Trigger for INSERT operation on room
 CREATE OR REPLACE FUNCTION increment_room_count()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE Hotel
-    SET number_of_rooms = number_of_rooms + 1
-    WHERE hotel_id = NEW.hotel_id AND address = NEW.hotel_address;
+UPDATE Hotel
+SET number_of_rooms = number_of_rooms + 1
+WHERE hotel_id = NEW.hotel_id AND address = NEW.hotel_address;
 
-    RETURN NEW;
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -757,13 +733,13 @@ CREATE TRIGGER increment_room_count_trigger
 
 -- Trigger for DELETE operation on room
 CREATE OR REPLACE FUNCTION decrement_room_count()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE Hotel
-    SET number_of_rooms = number_of_rooms - 1
-    WHERE hotel_id = OLD.hotel_id AND address = OLD.hotel_address;
+UPDATE Hotel
+SET number_of_rooms = number_of_rooms - 1
+WHERE hotel_id = OLD.hotel_id AND address = OLD.hotel_address;
 
-    RETURN OLD;
+RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -774,13 +750,13 @@ CREATE TRIGGER decrement_room_count_trigger
 
 -- Trigger for INSERT operation on Hotel
 CREATE OR REPLACE FUNCTION increment_hotel_count()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE Hotel_Chain
-    SET number_of_hotels = number_of_hotels + 1
-    WHERE chain_name = (SELECT chain_name FROM owns WHERE hotel_id = NEW.hotel_id AND hotel_address = NEW.address);
+UPDATE Hotel_Chain
+SET number_of_hotels = number_of_hotels + 1
+WHERE chain_name = (SELECT chain_name FROM owns WHERE hotel_id = NEW.hotel_id AND hotel_address = NEW.address);
 
-    RETURN NEW;
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -790,22 +766,19 @@ CREATE TRIGGER increment_hotel_count_trigger
 
 -- Trigger for DELETE operation on room
 CREATE OR REPLACE FUNCTION decrement_hotel_count()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE Hotel_Chain
-    SET number_of_hotels = number_of_hotels - 1
-    WHERE chain_name = (SELECT chain_name FROM owns WHERE hotel_id = OLD.hotel_id AND hotel_address = OLD.address);
+UPDATE Hotel_Chain
+SET number_of_hotels = number_of_hotels - 1
+WHERE chain_name = (SELECT chain_name FROM owns WHERE hotel_id = OLD.hotel_id AND hotel_address = OLD.address);
 
-    RETURN OLD;
+RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER decrement_hotel_count_trigger
     AFTER DELETE ON Hotel
     FOR EACH ROW EXECUTE FUNCTION decrement_hotel_count();
-
-
-
 
 
 
@@ -819,7 +792,7 @@ FROM Hotel_Chain hc
 WHERE r.booking_id IS NULL -- Added WHERE clause to filter rooms where booking_id is NULL
 GROUP BY hc.central_address;
 
-
+--Test view
 select * from roomsPerAreafixed;
 
 -- View 2: capacity per hotel for all rooms
@@ -832,6 +805,7 @@ FROM
 GROUP BY
     hotel_id;
 
+--Test view
 select * from totalCapacity;
 
 -- QUERY 1 using aggregation: finding the average price per hotel
@@ -845,11 +819,11 @@ from room group by hotel_id;
 SELECT C.customer_id, C.customer_name,
        (
            SELECT COUNT(*)
-           FROM Bookings B
+           FROM Booking B
            WHERE B.customer_id = C.customer_id
        ) AS total_bookings
 FROM
-    Customers C;
+    Customer C;
 
 -- Query 3: retrieving information for all available rooms
 SELECT room_id as RoomID, room_number as RoomNumber, price, capacity, view_type, amenities, hotel_id, hotel_address
@@ -879,13 +853,13 @@ CREATE INDEX idx_room_capacity ON room (capacity);
 
 --FOR updating booking_ID in room whenever a booking is made
 CREATE OR REPLACE FUNCTION update_room_booking_id()
-    RETURNS TRIGGER AS $$
+RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE room
-    SET booking_id = NEW.booking_id
-    WHERE room_id = NEW.room_id;
+UPDATE room
+SET booking_id = NEW.booking_id
+WHERE room_id = NEW.room_id;
 
-    RETURN NEW;
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -893,7 +867,8 @@ CREATE TRIGGER update_room_booking_id_trigger
     AFTER INSERT ON booking
     FOR EACH ROW EXECUTE FUNCTION update_room_booking_id();
 
-
+--Test
+select * from room;
 
 
 -- Insert data into customer table
@@ -916,5 +891,17 @@ VALUES
     (4, 4, '2024-03-16', 4),
     (5, 5, '2024-03-16', 5);
 
+-- Insert data into renting table
+INSERT INTO renting (renting_id, customer_id, room_id, checkin_date, checkout_date)
+VALUES
+    (1, 1, 1, '2024-03-16', '2024-03-20'),
+    (2, 2, 2, '2024-03-16', '2024-03-20'),
+    (3, 3, 3, '2024-03-16', '2024-03-20'),
+    (4, 4, 4, '2024-03-16', '2024-03-20'),
+    (5, 5, 5, '2024-03-16', '2024-03-20');
 
-select * from hotel
+--Test Archive
+select * from renting_archive
+select * from booking_archive
+
+select * from booking
