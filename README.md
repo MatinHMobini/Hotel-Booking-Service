@@ -1,4 +1,4 @@
-# CSI_2132_Databases_1
+# Hotel-Booking-Service
 This repository contains our course project for CSI2132. 
 <br><br>
 A web application was developed and connected to a SQL database to provide booking services for hotels.
